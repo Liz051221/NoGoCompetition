@@ -108,7 +108,7 @@ class BoardTests(unittest.TestCase):
             self.assertEqual(error.exception.code, 400)
             while not game.over:
                 state = post('/api/move', {'move': legal_moves(game.board, game.side)[0]})
-            self.assertEqual(state['record_filename'], 'A1：A2，先手胜.txt')
+            self.assertEqual(state['record_filename'], 'A1vsA2，A1胜.txt')
             with urllib.request.urlopen(base + '/api/record') as response:
                 self.assertEqual(response.read().decode('utf-8'), game.record_path.read_text())
                 self.assertTrue(response.headers['Content-Type'].startswith('text/plain'))
@@ -127,7 +127,8 @@ class BoardTests(unittest.TestCase):
                 while not game.over:
                     moves = legal_moves(game.board, game.side)
                     game.human(moves[0] if seed is None else rng.choice(moves))
-                self.assertEqual(game.record_path.name, f'我的模型：我，{result}.txt')
+                winner = '我的模型' if result == '先手胜' else '我'
+                self.assertEqual(game.record_path.name, f'我的模型vs我，{winner}胜.txt')
                 text = game.record_path.read_text(encoding='utf-8')
                 self.assertIn(f'结果：{result}', text)
                 self.assertIn('先手（黑方）：我的模型', text)
@@ -150,7 +151,7 @@ class BoardTests(unittest.TestCase):
             paths.append(game.record_path)
             game.state()
             game.save_record()
-        self.assertEqual([p.name for p in paths], ['A1：A2，先手胜.txt', 'A1：A2，先手胜（2）.txt'])
+        self.assertEqual([p.name for p in paths], ['A1vsA2，A1胜.txt', 'A1vsA2，A1胜（2）.txt'])
         self.assertEqual(len(list(self.record_dir.glob('*.txt'))), 2)
         self.assertTrue(all(p.read_text().count('黑（先手）') == 39 for p in paths))
 

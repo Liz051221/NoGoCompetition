@@ -58,7 +58,7 @@ class ClockTests(unittest.TestCase):
         self.assertTrue(self.game.check_clock())
         self.assertEqual(self.game.result, '先手负')
         self.assertIn('超时判负', self.game.message)
-        self.assertEqual(self.game.record_path.name, 'A1：A2，先手负.txt')
+        self.assertEqual(self.game.record_path.name, 'A1vsA2，A2胜.txt')
         self.assertEqual(self.game.state()['clocks'][1]['remaining'], 0)
         with self.assertRaises(ValueError):
             self.game.human(0)

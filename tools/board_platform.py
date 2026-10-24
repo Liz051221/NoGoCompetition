@@ -194,8 +194,16 @@ class Game:
         # Keep names in the record; make separators safe only in the filename.
         def safe(name):
             table = str.maketrans('/\\:*?"<>|', '／＼：＊？＂＜＞｜')
-            return name.translate(table).strip('. ') or '未命名'
-        return f'{safe(self.names[1])}：{safe(self.names[-1])}，{self.result or "进行中"}.txt'
+            # The winner's name appears twice; stay below macOS filename limits.
+            cleaned = name.translate(table).encode('utf-8')[:76].decode('utf-8', errors='ignore')
+            return cleaned.strip('. ') or '未命名'
+        first, second = safe(self.names[1]), safe(self.names[-1])
+        result = self.result or '进行中'
+        if self.result == '先手胜':
+            result = first + '胜'
+        elif self.result == '先手负':
+            result = second + '胜'
+        return f'{first}vs{second}，{result}.txt'
 
     def record_text(self):
         lines = ['NoGo 不围棋棋谱',

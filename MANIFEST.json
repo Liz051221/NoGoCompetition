@@ -43,13 +43,13 @@
     },
     {
       "path": "Mac使用教程.md",
-      "bytes": 12600,
-      "sha256": "a5082385e4b4c0b82bc4a4e9997685b4db57f2d9b42b3faaf91eb1c56585fec4"
+      "bytes": 12636,
+      "sha256": "2888142ae464b738679030aab10631f490e007a09f93be947a6a9ede2d01cb48"
     },
     {
       "path": "Mac使用教程.txt",
-      "bytes": 12600,
-      "sha256": "a5082385e4b4c0b82bc4a4e9997685b4db57f2d9b42b3faaf91eb1c56585fec4"
+      "bytes": 12636,
+      "sha256": "2888142ae464b738679030aab10631f490e007a09f93be947a6a9ede2d01cb48"
     },
     {
       "path": "NoGoEngine",
@@ -58,8 +58,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 1252,
-      "sha256": "bb2468359f18d1babfb6d46f3afe6671d6049dfba11d297a2ea1477f9466eba2"
+      "bytes": 1242,
+      "sha256": "7f8602b6fa364441c760dcdd18d5c66ae16d9208e08b71c86e0cc1a7008e1528"
     },
     {
       "path": "engine_config.json",
@@ -163,13 +163,13 @@
     },
     {
       "path": "tests/test_board_platform.py",
-      "bytes": 8391,
-      "sha256": "1151921d39839393130362891d8601721fa36fa60ce81d0ddaa8f8c11559832f"
+      "bytes": 8454,
+      "sha256": "e536327897197ea7a3adcda0cc04cd5b2fb9b3d612fcddab67f35e9ff1a54f99"
     },
     {
       "path": "tests/test_clocks.py",
-      "bytes": 7185,
-      "sha256": "fe04418b323f42701772a9d48bfb8df75c41b0f8a8635e795e4568d93ea26a68"
+      "bytes": 7180,
+      "sha256": "f9bf5a492734a5a35fde4be6b57cd0c4ae8575e85d8417505a8226a589f61ed4"
     },
     {
       "path": "tools/__init__.py",
@@ -183,8 +183,8 @@
     },
     {
       "path": "tools/board_platform.py",
-      "bytes": 20285,
-      "sha256": "3789f83381445788840b1d0bd22718b105ae192f637d29c2acd2bc3be40a47c9"
+      "bytes": 20662,
+      "sha256": "88e1107937298026e40f7a95d427ce0e07784f9c0b599a1fd319e4badc33216c"
     },
     {
       "path": "tools/macos_platform.py",
@@ -213,8 +213,8 @@
     },
     {
       "path": "更新说明.txt",
-      "bytes": 2056,
-      "sha256": "05a9401c9d9748b6df1ca5e5b4f19e1d6cdda4627f58a10e25376e54a532bc0d"
+      "bytes": 2450,
+      "sha256": "0620af162ac21b5918dd2df93c6564d973dc5316d2a88f038f2509fd59ac37e8"
     },
     {
       "path": "棋盘界面.png",
@@ -223,16 +223,16 @@
     },
     {
       "path": "验证记录.txt",
-      "bytes": 2679,
-      "sha256": "ec911775c7c1aef6c6645590767163b4b06dffea9a2fd265ccf5083c546e91e4"
+      "bytes": 2868,
+      "sha256": "2c1b0f69a54f41ed7bebae082f343fe9cbb07b1d8c246ba6ec5ae82cce48b590"
     }
   ],
   "board_entry": "启动棋盘.command",
-  "version": "2026.10.24-clocks-confirm-long-search",
+  "version": "2026.10.24-record-winner-names",
   "records": {
     "directory": "棋谱",
     "format": "UTF-8 TXT",
-    "filename": "先手名称：后手名称，先手胜或先手负.txt",
+    "filename": "先手名称vs后手名称，胜者名称胜.txt",
     "duplicate_names": "append （2）, （3）, ... without overwriting"
   },
   "board_clock": {
