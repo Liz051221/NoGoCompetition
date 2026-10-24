@@ -43,13 +43,13 @@
     },
     {
       "path": "Mac使用教程.md",
-      "bytes": 13872,
-      "sha256": "5cb0c1961e1b97074950f18e357293810146dc307bc3ccb0ed2c879810c5ac52"
+      "bytes": 13655,
+      "sha256": "3acd34c211b9cc9da0035ce189b24e44988706663decfce5bdef03de5960d91f"
     },
     {
       "path": "Mac使用教程.txt",
-      "bytes": 13872,
-      "sha256": "5cb0c1961e1b97074950f18e357293810146dc307bc3ccb0ed2c879810c5ac52"
+      "bytes": 13655,
+      "sha256": "3acd34c211b9cc9da0035ce189b24e44988706663decfce5bdef03de5960d91f"
     },
     {
       "path": "NoGoEngine",
@@ -178,8 +178,8 @@
     },
     {
       "path": "tools/board.html",
-      "bytes": 13878,
-      "sha256": "886420c51d9bea3a5524c5513da36e21fdaf2ff0aa5e2b8e4ae5c1893839bb29"
+      "bytes": 12411,
+      "sha256": "86e5336d6a59dcc38331af9a7d6ce92b799073e1f3aee6805c730209c3676643"
     },
     {
       "path": "tools/board_platform.py",
@@ -213,22 +213,22 @@
     },
     {
       "path": "更新说明.txt",
-      "bytes": 2897,
-      "sha256": "080549ee1ff2d21ae4585d8ed4d96b8f92b24916c0ccd0342f8abe4272007011"
+      "bytes": 3509,
+      "sha256": "ac529452e93bc5ba3a611df3f56d94d03b3ad793693a1e55eec35422daf4d9f1"
     },
     {
       "path": "棋盘界面.png",
-      "bytes": 324145,
-      "sha256": "de8be3778884e9445a02bfd30460fbb3786391c7a26c51bd47ef3fc1028d878c"
+      "bytes": 125916,
+      "sha256": "e74d931441b03ca9b54935769e7b5828e9a9ca3eb89eae96431d90d9ffbe9e7d"
     },
     {
       "path": "验证记录.txt",
-      "bytes": 3349,
-      "sha256": "6b4e8ac473d2c60e0f842baf8b9a2bc224252ef13c1c6a7bf0c09ab12070e465"
+      "bytes": 3802,
+      "sha256": "e47ea3b0af72f155ebc714fd8c1d829842a9a22251bf452626688b7786e35c5b"
     }
   ],
   "board_entry": "启动棋盘.command",
-  "version": "2026.10.24-ng-record-format",
+  "version": "2026.10.24-simplified-board-ui",
   "records": {
     "directory": "棋谱",
     "format": "UTF-8 NG: ([NG][black team][white team][result][date time venue][event];B[D5];W[E5])",
@@ -253,5 +253,10 @@
     "pause": "clock stops after current AI move finishes"
   },
   "default_ai_move_cap_seconds": 60,
-  "human_moves": "select an intersection, then explicitly confirm; selection time is counted"
+  "human_moves": "select an intersection, then explicitly confirm; selection time is counted",
+  "board_ui": {
+    "timers": "names and total remaining time only",
+    "search_controls": "removed; default long search retained",
+    "top_right_search_status": "removed"
+  }
 }

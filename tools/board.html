@@ -2,21 +2,19 @@
 <html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NoGo · 不围棋</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#20332b;background:#f4f3ee}*{box-sizing:border-box}body{margin:0;padding:32px 24px}main{max-width:1100px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #cdd6cb;margin-bottom:24px}h1{font-weight:650;letter-spacing:2px}small,.muted{color:#647269}section{display:grid;grid-template-columns:minmax(300px,650px) 300px;gap:24px}.panel{background:#fff;border:1px solid #ddd;border-radius:16px;padding:22px}canvas{width:100%;display:block;touch-action:manipulation;border-radius:10px;background:#dfbb80}label{display:block;margin:16px 0 6px}select,button,input[type="text"]{font:inherit;width:100%;padding:11px;border-radius:8px;border:1px solid #bdc9be;background:white;color:#20332b}button{cursor:pointer}button.primary{background:#24533d;color:#fff;margin-top:18px;border:0}button:disabled{opacity:.5;cursor:wait}.status{font-size:18px;min-height:55px;line-height:1.5}.moves{height:190px;overflow:auto;line-height:1.8;font-variant-numeric:tabular-nums;border-top:1px solid #eee;padding-top:12px}.error{color:#aa302a;min-height:24px}p{line-height:1.7}a{color:inherit}input{accent-color:#24533d}.row{display:flex;gap:8px;align-items:center;margin:14px 0}.row label{margin:0}footer{font-size:13px;color:#647269;margin:16px 0}@media(max-width:800px){body{padding:16px}section{grid-template-columns:1fr}.moves{height:140px}header small{display:none}}
-.timers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}.timer{background:#fff;border:2px solid #dce2d9;border-radius:12px;padding:14px}.timer.active{border-color:#24533d;background:#eef5ed}.timer.reserve{border-color:#c36f2e}.timer strong{display:block;font-size:30px;font-variant-numeric:tabular-nums;margin:5px 0}.timer small{display:block;line-height:1.7}.confirm-actions{display:flex;gap:8px;margin:12px 0}.confirm-actions button{width:50%}.confirm-actions .primary{margin:0}.selection{min-height:24px;font-size:15px}.board-column{min-width:0}
+:root{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#20332b;background:#f4f3ee}*{box-sizing:border-box}body{margin:0;padding:32px 24px}main{max-width:1100px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #cdd6cb;margin-bottom:24px}h1{font-weight:650;letter-spacing:2px}small,.muted{color:#647269}section{display:grid;grid-template-columns:minmax(300px,650px) 300px;gap:24px}.panel{background:#fff;border:1px solid #ddd;border-radius:16px;padding:22px}canvas{width:100%;display:block;touch-action:manipulation;border-radius:10px;background:#dfbb80}label{display:block;margin:16px 0 6px}select,button,input[type="text"]{font:inherit;width:100%;padding:11px;border-radius:8px;border:1px solid #bdc9be;background:white;color:#20332b}button{cursor:pointer}button.primary{background:#24533d;color:#fff;margin-top:18px;border:0}button:disabled{opacity:.5;cursor:wait}.moves{height:190px;overflow:auto;line-height:1.8;font-variant-numeric:tabular-nums;border-top:1px solid #eee;padding-top:12px}.error{color:#aa302a}.error:empty{display:none}p{line-height:1.7}a{color:inherit}input{accent-color:#24533d}.row{display:flex;gap:8px;align-items:center;margin:14px 0}.row label{margin:0}footer{font-size:13px;color:#647269;margin:16px 0}@media(max-width:800px){body{padding:16px}section{grid-template-columns:1fr}.moves{height:140px}header small{display:none}}
+.timers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}.timer{background:#fff;border:2px solid #dce2d9;border-radius:12px;padding:14px}.timer.active{border-color:#24533d;background:#eef5ed}.timer.reserve{border-color:#c36f2e}.timer strong{display:block;font-size:30px;font-variant-numeric:tabular-nums;margin:5px 0}.confirm-actions{display:flex;gap:8px;margin:12px 0}.confirm-actions button{width:50%}.confirm-actions .primary{margin:0}.selection{min-height:24px;font-size:15px}.board-column{min-width:0}
 </style>
 <main><header><h1>NoGo <small>不围棋</small></h1><small>9 × 9 · 本地 SAU 引擎棋盘</small></header>
-<section><div class="board-column"><div class="timers"><div id="timer-black" class="timer"><span id="name-black">先手 · 黑方</span><strong id="remaining-black">15:00</strong><small id="budget-black">思考 12:00 · 预留 03:00</small><small id="used-black">已用 00:00 · 本手 00:00</small></div><div id="timer-white" class="timer"><span id="name-white">后手 · 白方</span><strong id="remaining-white">15:00</strong><small id="budget-white">思考 12:00 · 预留 03:00</small><small id="used-white">已用 00:00 · 本手 00:00</small></div></div><canvas id="board" width="720" height="720" aria-label="九路不围棋棋盘，点击交叉点选择，随后确认落子"></canvas>
+<section><div class="board-column"><div class="timers"><div id="timer-black" class="timer"><span id="name-black">先手 · 黑方</span><strong id="remaining-black">15:00</strong></div><div id="timer-white" class="timer"><span id="name-white">后手 · 白方</span><strong id="remaining-white">15:00</strong></div></div><canvas id="board" width="720" height="720" aria-label="九路不围棋棋盘，点击交叉点选择，随后确认落子"></canvas>
 <div class="confirm-actions"><button id="confirm" class="primary" disabled>确认落子</button><button id="cancel" disabled>取消选点</button></div><div id="selection" class="selection" role="status">请先开始新局。</div><footer>横坐标 A–I，纵坐标 1–9，A1 位于左上角，与导出棋谱一致。红圈表示上一手。</footer>
 <p>规则：黑先白后，轮流落子。<b>不能提掉对方棋子，不能自杀，不能停着。</b>轮到某方时没有合法落点，该方输。</p></div>
-<aside class="panel"><div id="status" class="status" role="status" aria-live="polite">正在连接…</div><div id="error" class="error" role="alert"></div>
+<aside class="panel"><div id="error" class="error" role="alert"></div>
 <label for="mode">对局模式</label><select id="mode"><option value="ha">我执黑 · AI 执白</option><option value="ah">AI 执黑 · 我执白</option><option value="hh">双人同机对弈</option><option value="aa">AI 对战 AI</option></select>
 <label for="first-name">先手名称（黑方）</label><input id="first-name" type="text" value="A1" maxlength="24">
 <label for="second-name">后手名称（白方）</label><input id="second-name" type="text" value="A2" maxlength="24">
 <label for="venue">比赛地点</label><input id="venue" type="text" value="本地" maxlength="80">
 <label for="event-name">赛事名称</label><input id="event-name" type="text" value="本地对局" maxlength="80">
-<label for="seconds">AI 搜索时长</label><select id="seconds"><option value="60">长搜索 · 单手上限 60 秒</option><option value="30">单手上限 30 秒</option><option value="10">单手上限 10 秒</option><option value="5">单手上限 5 秒</option><option value="2">快速体验 · 单手上限 2 秒</option></select>
-<p class="muted" style="font-size:13px">每方总计 15 分钟：思考 12 分钟＋预留 3 分钟。AI 按剩余预算分配搜索时间，遇到必胜或唯一合法着可提前结束。</p>
 <button id="new" class="primary">开始新局</button><button id="pause" style="margin-top:8px" disabled>暂停对局</button>
 <div class="row"><input id="hints" type="checkbox" checked><label for="hints">显示当前方合法落点</label></div>
 <div class="row"><input id="numbers" type="checkbox"><label for="numbers">显示手数</label></div>
@@ -43,18 +41,14 @@ function coord(i){return String.fromCharCode(65+i%9)+String(Math.floor(i/9)+1)}
 function duration(seconds,remaining=false){let n=Math.max(0,remaining?Math.ceil(seconds):Math.floor(seconds));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 function renderClocks(){
  if(!state)return;let delta=Math.max(0,(performance.now()-receivedAt)/1000);
- for(let [side,label] of [[1,'black'],[-1,'white']]){let base=state.clocks[String(side)],active=state.active_side===side,used=base.used+(active?delta:0),main=Math.max(0,state.total_seconds-state.reserve_seconds-used),remaining=Math.max(0,state.total_seconds-used),reserve=Math.min(state.reserve_seconds,remaining);
+ for(let [side,label] of [[1,'black'],[-1,'white']]){let base=state.clocks[String(side)],active=state.active_side===side,used=base.used+(active?delta:0),main=Math.max(0,state.total_seconds-state.reserve_seconds-used),remaining=Math.max(0,state.total_seconds-used);
  $('timer-'+label).className='timer'+(active?' active':'')+(active&&main<=0?' reserve':'');
  $('name-'+label).textContent=(side===1?'先手 · 黑方':'后手 · 白方')+' · '+state.names[String(side)];
  $('remaining-'+label).textContent=duration(remaining,true);
- $('budget-'+label).textContent='思考 '+duration(main,true)+' · 预留 '+duration(reserve,true)+(main<=0?'（预留阶段）':'');
- $('used-'+label).textContent='已用 '+duration(used)+' · 本手 '+duration(base.turn_elapsed+(active?delta:0));
  }
 }
 function render(){
  draw();if(!state)return;renderClocks();
- $('status').textContent=state.thinking?'AI 长搜索中，请稍候…':state.message+(state.paused&&!state.over?'（已暂停，计时停止）':'');
- if(state.pause_pending)$('status').textContent+=' 当前一手结束后暂停。';
  $('error').textContent=notice;
  $('new').disabled=busy||state.thinking;
  $('download-txt').disabled=busy||!state.history.length;
@@ -65,7 +59,7 @@ function render(){
  $('confirm').disabled=busy||!humanTurn()||pending===null;
  $('cancel').disabled=busy||pending===null;
  $('confirm').textContent=pending===null?'确认落子':'确认落子 '+coord(pending);
- $('selection').textContent=state.over?'本局已结束。':state.paused?'对局已暂停。':humanTurn()?(pending===null?'点击棋盘选择落点，再点击“确认落子”。':'待确认：'+coord(pending)+'。可以重新选点；确认前仍在计时。'):state.active_side===null?'请先开始新局。':'等待 AI 落子。';
+ $('selection').textContent=state.over?state.message:state.paused?'对局已暂停。':state.pause_pending?'当前一手结束后暂停。':humanTurn()?(pending===null?'轮到'+(state.side===1?'黑方':'白方')+'。点击棋盘选择落点，再点击“确认落子”。':'待确认：'+coord(pending)+'。可以重新选点；确认前仍在计时。'):state.active_side===null?'请先开始新局。':'等待 AI 落子。';
  $('moves').textContent=state.history.map(m=>`${m.number}. ${m.side===1?'黑':'白'} ${m.coord} · ${m.seconds.toFixed(2)}s`).join('\n')||'暂无棋步';$('moves').style.whiteSpace='pre-line';$('moves').scrollTop=$('moves').scrollHeight;
 }
 function adopt(s){
@@ -74,9 +68,9 @@ function adopt(s){
  state=s;receivedAt=performance.now();render();
 }
 async function api(path,data){let r=await fetch('/api/'+path,{method:'POST',headers:{'Content-Type':'application/json','X-NoGo-Token':token},body:JSON.stringify(data||{})});let s=await r.json();if(!r.ok)throw Error(s.error||'请求失败');return s}
-async function sync(){if(syncing)return;syncing=true;try{let r=await fetch('/api/state');if(!r.ok)throw Error('无法连接');adopt(await r.json())}catch{notice='无法连接服务，请检查启动终端。';if(state)render();else $('status').textContent=notice}finally{syncing=false}}
+async function sync(){if(syncing)return;syncing=true;try{let r=await fetch('/api/state');if(!r.ok)throw Error('无法连接');adopt(await r.json())}catch{notice='无法连接服务，请检查启动终端。';if(state)render();else $('selection').textContent=notice}finally{syncing=false}}
 async function act(path,data){if(busy)return;busy=true;operation=path;notice='';render();try{adopt(await api(path,data))}catch(e){notice=e.message;await sync()}finally{busy=false;render()}}
-$('new').onclick=async()=>{if(busy||state?.thinking)return;if(state?.history.length&&!state.over&&!confirm('结束当前对局并开始新局？'))return;pending=null;await act('new',{mode:$('mode').value,seconds:Number($('seconds').value),first_name:$('first-name').value,second_name:$('second-name').value,venue:$('venue').value,event_name:$('event-name').value})};
+$('new').onclick=async()=>{if(busy||state?.thinking)return;if(state?.history.length&&!state.over&&!confirm('结束当前对局并开始新局？'))return;pending=null;await act('new',{mode:$('mode').value,first_name:$('first-name').value,second_name:$('second-name').value,venue:$('venue').value,event_name:$('event-name').value})};
 $('pause').onclick=()=>{if(state)act('pause',{paused:!(state.paused||state.pause_pending)})};
 $('hints').onchange=draw;$('numbers').onchange=draw;
 c.onclick=e=>{if(busy||!humanTurn())return;let r=c.getBoundingClientRect(),x=Math.round(((e.clientX-r.left)*720/r.width-64)/74),y=Math.round(((e.clientY-r.top)*720/r.height-64)/74);if(x<0||x>=9||y<0||y>=9)return;let move=y*9+x;if(!state.legal.includes(move)){notice='此处不是合法落点，请重新选择。';render();return}notice='';pending=move;render()};
@@ -86,5 +80,5 @@ $('download-txt').onclick=()=>{if(!state||busy||!state.history.length)return;let
 $('download').onclick=()=>{if(!state)return;let u=URL.createObjectURL(new Blob([JSON.stringify({format:'nogo-local-sau-v3',exported_at:new Date().toISOString(),...state},null,2)],{type:'application/json'}));let a=document.createElement('a');a.href=u;a.download='NoGo-'+Date.now()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
 setInterval(()=>{if(state&&!busy&&!state.thinking&&!state.paused&&!state.over&&state.active_side!==null&&state.players[String(state.side)]==='ai')act('step')},250);
 setInterval(sync,500);setInterval(renderClocks,100);
-sync().then(()=>{if(state){$('first-name').value=state.names['1'];$('second-name').value=state.names['-1'];$('venue').value=state.venue;$('event-name').value=state.event_name;$('seconds').value=String(state.move_cap_seconds)}});draw();
+sync().then(()=>{if(state){$('first-name').value=state.names['1'];$('second-name').value=state.names['-1'];$('venue').value=state.venue;$('event-name').value=state.event_name}});draw();
 </script></html>
