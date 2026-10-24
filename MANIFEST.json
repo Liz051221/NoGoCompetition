@@ -43,13 +43,13 @@
     },
     {
       "path": "Mac使用教程.md",
-      "bytes": 13655,
-      "sha256": "3acd34c211b9cc9da0035ce189b24e44988706663decfce5bdef03de5960d91f"
+      "bytes": 14201,
+      "sha256": "e9bc665f3fc58f18dd111fe87b3246d793f58aded47466eee1f785154319b794"
     },
     {
       "path": "Mac使用教程.txt",
-      "bytes": 13655,
-      "sha256": "3acd34c211b9cc9da0035ce189b24e44988706663decfce5bdef03de5960d91f"
+      "bytes": 14201,
+      "sha256": "e9bc665f3fc58f18dd111fe87b3246d793f58aded47466eee1f785154319b794"
     },
     {
       "path": "NoGoEngine",
@@ -58,8 +58,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 1394,
-      "sha256": "23dc569035b083cb0225006cb23057b9b63b32f4b9402209e5f1f45b8c37c635"
+      "bytes": 1427,
+      "sha256": "165828ca0b2e80d58a23c264f97d550281893684a284a60e9f51c4b649fe52e0"
     },
     {
       "path": "engine_config.json",
@@ -98,8 +98,8 @@
     },
     {
       "path": "nogo_ai/competition_runtime.py",
-      "bytes": 11242,
-      "sha256": "30f3c078a4e6abc0579bf95cec8ce5a6b2242bac61958d21fc48ba18e58be0f5"
+      "bytes": 11924,
+      "sha256": "c808682dbf42cee539f6cc72294a876d7c7d08da717b87d719d88cd36f652289"
     },
     {
       "path": "nogo_ai/endgame.py",
@@ -168,8 +168,8 @@
     },
     {
       "path": "tests/test_clocks.py",
-      "bytes": 7180,
-      "sha256": "f9bf5a492734a5a35fde4be6b57cd0c4ae8575e85d8417505a8226a589f61ed4"
+      "bytes": 11203,
+      "sha256": "7e9895a584209a6c5b64de3b969eb4f07e136e4e7b74e82019382497ea1f6c64"
     },
     {
       "path": "tools/__init__.py",
@@ -178,13 +178,13 @@
     },
     {
       "path": "tools/board.html",
-      "bytes": 12411,
-      "sha256": "86e5336d6a59dcc38331af9a7d6ce92b799073e1f3aee6805c730209c3676643"
+      "bytes": 12666,
+      "sha256": "c9585bcc2d0b6004a7aa12257f46f53666b20f38facd1e68009b1b630e4ea5cf"
     },
     {
       "path": "tools/board_platform.py",
-      "bytes": 21158,
-      "sha256": "de925135c13d8052f71416b881f861c0c2c40dbc1c9b137cf3e11e745d414a66"
+      "bytes": 20422,
+      "sha256": "56ccdeaf0787d6fe4f400e213ba1ae18bcf9acfba1300d4b40baf6afc61b5ac6"
     },
     {
       "path": "tools/macos_platform.py",
@@ -198,8 +198,8 @@
     },
     {
       "path": "使用说明.txt",
-      "bytes": 1179,
-      "sha256": "24a24e54bb649bd9d937e33581a6e83bc9dcf674a4593cfbea7005238420f31c"
+      "bytes": 1224,
+      "sha256": "4a2751ed7dfc8b0d0b97f6201c68abbd7de4194a39099b92c9da754b76bc9e18"
     },
     {
       "path": "启动棋盘.command",
@@ -213,22 +213,22 @@
     },
     {
       "path": "更新说明.txt",
-      "bytes": 3509,
-      "sha256": "ac529452e93bc5ba3a611df3f56d94d03b3ad793693a1e55eec35422daf4d9f1"
+      "bytes": 4729,
+      "sha256": "7a0e07cbd9fee992a07c45a0d6102c95ca2862dd837aab218eca76f71f25d144"
     },
     {
       "path": "棋盘界面.png",
-      "bytes": 125916,
-      "sha256": "e74d931441b03ca9b54935769e7b5828e9a9ca3eb89eae96431d90d9ffbe9e7d"
+      "bytes": 135086,
+      "sha256": "0a30f0bd1dcd50a1147cd4e5529989d9d7b7c5d85dd726e6d16d10f47b973d57"
     },
     {
       "path": "验证记录.txt",
-      "bytes": 3802,
-      "sha256": "e47ea3b0af72f155ebc714fd8c1d829842a9a22251bf452626688b7786e35c5b"
+      "bytes": 4403,
+      "sha256": "bb0c98fe83bacba3963a083d2546a1d5b27536355deb2f2e3a193039b2647167"
     }
   ],
   "board_entry": "启动棋盘.command",
-  "version": "2026.10.24-simplified-board-ui",
+  "version": "2026.10.24-advisory-clock-continue-play",
   "records": {
     "directory": "棋谱",
     "format": "UTF-8 NG: ([NG][black team][white team][result][date time venue][event];B[D5];W[E5])",
@@ -249,13 +249,14 @@
     "total_seconds": 900,
     "thinking_seconds": 720,
     "reserve_seconds": 180,
-    "timeout": "loss",
-    "pause": "clock stops after current AI move finishes"
+    "timeout": "advisory only; play continues and final board determines the winner",
+    "pause": "clock stops after current AI move finishes",
+    "overtime_ai": "same neural model and MCTS, normal per-move cap; no total-clock forfeiture"
   },
   "default_ai_move_cap_seconds": 60,
   "human_moves": "select an intersection, then explicitly confirm; selection time is counted",
   "board_ui": {
-    "timers": "names and total remaining time only",
+    "timers": "names and remaining time; red 00:00 after expiration, moves remain enabled",
     "search_controls": "removed; default long search retained",
     "top_right_search_status": "removed"
   }

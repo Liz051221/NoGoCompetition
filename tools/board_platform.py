@@ -115,6 +115,7 @@ class Game:
         live = max(0., now - self.turn_started) if self.turn_started is not None else 0.
         used[self.side] += live
         return {side: dict(used=used[side], remaining=max(0., self.total_seconds-used[side]),
+                          overtime=used[side] >= self.total_seconds,
                           thinking_remaining=max(0., self.total_seconds-self.reserve_seconds-used[side]),
                           reserve_remaining=min(self.reserve_seconds, max(0., self.total_seconds-used[side])),
                           turn_elapsed=self.turn_spent+live if side == self.side else 0.)
@@ -128,16 +129,8 @@ class Game:
             self.turn_spent += elapsed
             self.turn_started = now
 
-    def check_clock(self):
-        if self.turn_started is not None and not self.over:
-            if self.clock_values()[self.side]['remaining'] <= 0:
-                loser = self.side
-                self.finish(-loser, reason=('黑方' if loser == 1 else '白方')+'总时间耗尽，超时判负。')
-                return True
-        return False
-
     def set_paused(self, paused):
-        if self.started_at is None or self.over or self.check_clock():
+        if self.started_at is None or self.over:
             return
         if paused and self.thinking:
             self.pause_pending = True
@@ -279,8 +272,6 @@ class Game:
         self.close()
 
     def place(self, move):
-        if self.check_clock():
-            return
         next_board = play_move(self.board, self.side, move)
         self.charge_clock()
         self.history.append({'number': len(self.history)+1, 'side': self.side,
@@ -299,8 +290,6 @@ class Game:
                 self.set_paused(True)
 
     def human(self, move, expected_move_no=None, game_id=None):
-        if self.check_clock():
-            return
         if self.started_at is None or self.over or self.paused or self.thinking or self.players[self.side] != 'human':
             raise ValueError('当前不能由人类落子')
         if (expected_move_no is not None and expected_move_no != len(self.history)) or (game_id is not None and game_id != self.game_id):
@@ -317,7 +306,7 @@ class Game:
 
     def step(self):
         with self.lock:
-            if self.check_clock() or self.started_at is None or self.over or self.paused or self.thinking or self.players[self.side] != 'ai':
+            if self.started_at is None or self.over or self.paused or self.thinking or self.players[self.side] != 'ai':
                 return
             self.thinking = True
             side, game_id = self.side, self.game_id
@@ -325,10 +314,10 @@ class Game:
             command = 'new black' if not self.history else 'move ' + index_to_coord(self.history[-1]['index'])
             clock = self.clock_values()[side]
         try:
-            engine.send(f'clock {clock["thinking_remaining"]:.6f}')
-            reply = engine.ask(command, min(self.seconds + 10, clock['remaining'] + .05))
+            engine.send('clock overtime' if clock['overtime'] else f'clock {clock["thinking_remaining"]:.6f}')
+            reply = engine.ask(command, self.seconds + 10)
             with self.lock:
-                if self.over or self.game_id != game_id or self.check_clock():
+                if self.over or self.game_id != game_id:
                     return
                 parts = reply.split()
                 if len(parts) != 2 or parts[0] != 'move':
@@ -340,7 +329,7 @@ class Game:
                 self.place(move)
         except Exception as exc:
             with self.lock:
-                if self.over or self.game_id != game_id or self.check_clock():
+                if self.over or self.game_id != game_id:
                     return
                 self.charge_clock()
                 self.turn_started = None
@@ -354,7 +343,6 @@ class Game:
                 self.thinking = False
 
     def state(self):
-        self.check_clock()
         return dict(board=self.board, side=self.side, history=list(self.history), over=self.over,
                     message=self.message, players=self.players, spent=dict(self.spent),
                     names=self.names, result=self.result, game_id=self.game_id, server_time=self.now(),
@@ -434,12 +422,6 @@ def main():
     parser.add_argument('--no-browser', action='store_true')
     args = parser.parse_args()
     game = Game()
-    stop_clock = threading.Event()
-    def watch_clock():
-        while not stop_clock.wait(.1):
-            with game.lock:
-                game.check_clock()
-    threading.Thread(target=watch_clock, daemon=True).start()
     server = ThreadingHTTPServer(('127.0.0.1', args.port), make_handler(game, secrets.token_hex(24)))
     address = f'http://127.0.0.1:{server.server_port}'
     print('NoGo 棋盘已启动。请在本机浏览器打开：' + address, flush=True)
@@ -451,7 +433,6 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
-        stop_clock.set()
         server.server_close()
         with game.lock:
             game.close()

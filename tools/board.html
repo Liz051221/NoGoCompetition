@@ -3,7 +3,7 @@
 <title>NoGo · 不围棋</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#20332b;background:#f4f3ee}*{box-sizing:border-box}body{margin:0;padding:32px 24px}main{max-width:1100px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #cdd6cb;margin-bottom:24px}h1{font-weight:650;letter-spacing:2px}small,.muted{color:#647269}section{display:grid;grid-template-columns:minmax(300px,650px) 300px;gap:24px}.panel{background:#fff;border:1px solid #ddd;border-radius:16px;padding:22px}canvas{width:100%;display:block;touch-action:manipulation;border-radius:10px;background:#dfbb80}label{display:block;margin:16px 0 6px}select,button,input[type="text"]{font:inherit;width:100%;padding:11px;border-radius:8px;border:1px solid #bdc9be;background:white;color:#20332b}button{cursor:pointer}button.primary{background:#24533d;color:#fff;margin-top:18px;border:0}button:disabled{opacity:.5;cursor:wait}.moves{height:190px;overflow:auto;line-height:1.8;font-variant-numeric:tabular-nums;border-top:1px solid #eee;padding-top:12px}.error{color:#aa302a}.error:empty{display:none}p{line-height:1.7}a{color:inherit}input{accent-color:#24533d}.row{display:flex;gap:8px;align-items:center;margin:14px 0}.row label{margin:0}footer{font-size:13px;color:#647269;margin:16px 0}@media(max-width:800px){body{padding:16px}section{grid-template-columns:1fr}.moves{height:140px}header small{display:none}}
-.timers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}.timer{background:#fff;border:2px solid #dce2d9;border-radius:12px;padding:14px}.timer.active{border-color:#24533d;background:#eef5ed}.timer.reserve{border-color:#c36f2e}.timer strong{display:block;font-size:30px;font-variant-numeric:tabular-nums;margin:5px 0}.confirm-actions{display:flex;gap:8px;margin:12px 0}.confirm-actions button{width:50%}.confirm-actions .primary{margin:0}.selection{min-height:24px;font-size:15px}.board-column{min-width:0}
+.timers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}.timer{background:#fff;border:2px solid #dce2d9;border-radius:12px;padding:14px}.timer.active{border-color:#24533d;background:#eef5ed}.timer.reserve{border-color:#c36f2e}.timer.overtime{border-color:#b64332}.timer.overtime strong{color:#b64332}.timer strong{display:block;font-size:30px;font-variant-numeric:tabular-nums;margin:5px 0}.confirm-actions{display:flex;gap:8px;margin:12px 0}.confirm-actions button{width:50%}.confirm-actions .primary{margin:0}.selection{min-height:24px;font-size:15px}.board-column{min-width:0}
 </style>
 <main><header><h1>NoGo <small>不围棋</small></h1><small>9 × 9 · 本地 SAU 引擎棋盘</small></header>
 <section><div class="board-column"><div class="timers"><div id="timer-black" class="timer"><span id="name-black">先手 · 黑方</span><strong id="remaining-black">15:00</strong></div><div id="timer-white" class="timer"><span id="name-white">后手 · 白方</span><strong id="remaining-white">15:00</strong></div></div><canvas id="board" width="720" height="720" aria-label="九路不围棋棋盘，点击交叉点选择，随后确认落子"></canvas>
@@ -19,7 +19,7 @@
 <div class="row"><input id="hints" type="checkbox" checked><label for="hints">显示当前方合法落点</label></div>
 <div class="row"><input id="numbers" type="checkbox"><label for="numbers">显示手数</label></div>
 <button id="download-txt">导出棋谱 TXT</button><button id="download" style="margin-top:8px">导出棋谱 JSON</button><p id="record-status" class="muted" role="status" style="font-size:13px;overflow-wrap:anywhere">对局结束后将自动保存 TXT 棋谱。</p><div class="moves" id="moves">暂无棋步</div>
-<p class="muted" style="font-size:12px">人类选点后需点“确认落子”，确认前持续计时。总时间耗尽判负；暂停时停钟，AI 当前一手结束后才暂停。</p></aside></section></main>
+<p class="muted" style="font-size:12px">人类选点后需点“确认落子”，确认前持续计时。计时仅作参考，超时可继续，胜负以棋局为准。暂停时停钟，AI 当前一手结束后才暂停。</p></aside></section></main>
 <script>
 const token='__TOKEN__';
 const $=id=>document.getElementById(id), c=$('board'), ctx=c.getContext('2d');
@@ -42,9 +42,10 @@ function duration(seconds,remaining=false){let n=Math.max(0,remaining?Math.ceil(
 function renderClocks(){
  if(!state)return;let delta=Math.max(0,(performance.now()-receivedAt)/1000);
  for(let [side,label] of [[1,'black'],[-1,'white']]){let base=state.clocks[String(side)],active=state.active_side===side,used=base.used+(active?delta:0),main=Math.max(0,state.total_seconds-state.reserve_seconds-used),remaining=Math.max(0,state.total_seconds-used);
- $('timer-'+label).className='timer'+(active?' active':'')+(active&&main<=0?' reserve':'');
+ $('timer-'+label).className='timer'+(active?' active':'')+(used>=state.total_seconds?' overtime':active&&main<=0?' reserve':'');
  $('name-'+label).textContent=(side===1?'先手 · 黑方':'后手 · 白方')+' · '+state.names[String(side)];
  $('remaining-'+label).textContent=duration(remaining,true);
+ $('remaining-'+label).title=used>=state.total_seconds?'已超时，可继续对局':'总剩余时间';
  }
 }
 function render(){

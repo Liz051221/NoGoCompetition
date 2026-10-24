@@ -212,10 +212,14 @@ class CompetitionProtocol(SAUNoGoEngine):
         parts = line.replace("\x00", "").lstrip("\ufeff").split()
         # Optional local-referee extension; standard SAU commands stay unchanged.
         if len(parts) == 2 and parts[0].lower() == "clock":
+            if parts[1].lower() == "overtime":
+                self.referee_overtime = True
+                return None
             try:
                 remaining = float(parts[1])
                 if 0 <= remaining < float("inf"):
                     self.referee_search_remaining = remaining
+                    self.referee_overtime = False
             except ValueError:
                 pass
             return None
@@ -230,6 +234,16 @@ class CompetitionProtocol(SAUNoGoEngine):
                 self.search_seconds = previous + time.perf_counter() - started
 
     def _choose_and_play(self):
+        if getattr(self, "referee_overtime", False):
+            # Advisory-clock local games continue normal per-move neural search.
+            # Restore config afterwards; legacy SAU total budgets stay unchanged.
+            total = self.config.game_time_limit
+            self.config.game_time_limit = 0
+            self.searcher.remaining_game_seconds = float("inf")
+            try:
+                return super()._choose_and_play()
+            finally:
+                self.config.game_time_limit = total
         usable = max(0.0, self.config.game_time_limit - max(0.0, self.config.time_reserve))
         # Include the referee's actual turn clock, including time between requests.
         if hasattr(self, "referee_search_remaining"):
