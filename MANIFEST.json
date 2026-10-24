@@ -18,8 +18,8 @@
   "files": [
     {
       "path": ".gitignore",
-      "bytes": 42,
-      "sha256": "b3751416cb808fd468bd9e4cc30347f5dbc7858e68f681e8b2024661881fe74e"
+      "bytes": 50,
+      "sha256": "b44504119f4c13e2ae325fbbd996629a480c6782d2bdd8dae42115857e09c116"
     },
     {
       "path": "CheckEngine.command",
@@ -43,13 +43,13 @@
     },
     {
       "path": "Mac使用教程.md",
-      "bytes": 8637,
-      "sha256": "27f5c47a3d05d778df5ccfc92ec410cd02bdc9c30720bdb82f9111534697ee84"
+      "bytes": 10831,
+      "sha256": "8db74f2224321e6c5659817abfbb5a7dee391cbee8e2599ad7af3d98f4e0348d"
     },
     {
       "path": "Mac使用教程.txt",
-      "bytes": 8637,
-      "sha256": "27f5c47a3d05d778df5ccfc92ec410cd02bdc9c30720bdb82f9111534697ee84"
+      "bytes": 10831,
+      "sha256": "8db74f2224321e6c5659817abfbb5a7dee391cbee8e2599ad7af3d98f4e0348d"
     },
     {
       "path": "NoGoEngine",
@@ -58,8 +58,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 661,
-      "sha256": "11c64da0bd47854a111d6e65c4b82ab0f9ce782038216b71f7be3225bf96923e"
+      "bytes": 994,
+      "sha256": "5fb5fa3f18512b095e4f60d449af4750b679e02f22264a97582e32b8dda4cd57"
     },
     {
       "path": "engine_config.json",
@@ -163,8 +163,8 @@
     },
     {
       "path": "tests/test_board_platform.py",
-      "bytes": 4044,
-      "sha256": "7b4a1a1ed4731fdd481b99ebe99c3c74eb0f67bb30daf807c09e9acb33eceb1c"
+      "bytes": 8305,
+      "sha256": "b0383714462652f58e78646b2a48e09dfced40f7c936cd4713db13db1b954f2d"
     },
     {
       "path": "tools/__init__.py",
@@ -173,13 +173,13 @@
     },
     {
       "path": "tools/board.html",
-      "bytes": 7805,
-      "sha256": "3f2b01a45fa2bfc31d43524c960ff63e42e08f65df84fc3e514e27abae7a5fcb"
+      "bytes": 8908,
+      "sha256": "6d8232a9c644c7da925625782c59f36b334091492b709ec7a2186a7fa56ebc0c"
     },
     {
       "path": "tools/board_platform.py",
-      "bytes": 9494,
-      "sha256": "cacb6420a2520b3b09e557eded1e802ec370257abe0086883491bee0ca722a89"
+      "bytes": 14364,
+      "sha256": "67593857354ebf91f71e5c08dee7dc48e82158f1068406a6005fcbf3b1ac32b7"
     },
     {
       "path": "tools/macos_platform.py",
@@ -193,8 +193,8 @@
     },
     {
       "path": "使用说明.txt",
-      "bytes": 822,
-      "sha256": "d53eddd73e33374c37f0b0ce1b1ebcbe14f1e3726e5c5b501c626d0a8d21adae"
+      "bytes": 995,
+      "sha256": "53b8805140e9c49e20fa32109fac0c0063ab10a5335667537fe57eae0c99dfc3"
     },
     {
       "path": "启动棋盘.command",
@@ -207,15 +207,27 @@
       "sha256": "3bf4fff80f355b65dd0a71149a70b778630dd762138cf9d1a2bd7e639f730027"
     },
     {
+      "path": "更新说明.txt",
+      "bytes": 1591,
+      "sha256": "3baaf4138849bb3a01ef78271e2e303f8b3c11784eefc8819c7354519f3b1a9d"
+    },
+    {
       "path": "棋盘界面.png",
-      "bytes": 104911,
-      "sha256": "1a05844c5d0fbf9818ba5b79b61681b98aac29a3ccd793d1e0a3b87cdba2f69c"
+      "bytes": 286995,
+      "sha256": "7ff6b4ff3034b23dad4391e575cf8ffa6f18deffcad3a196ac70154a0c447af2"
     },
     {
       "path": "验证记录.txt",
-      "bytes": 1392,
-      "sha256": "35866a17f1e5a72feee2d578acb04ba1ea1fbfb1e4de45cb3114a40fd77facfd"
+      "bytes": 1865,
+      "sha256": "f3afa8254b5d7eaf5309a9e0ddd1d6a701fd51c5f8f0457c4a1f76cd899e6c36"
     }
   ],
-  "board_entry": "启动棋盘.command"
+  "board_entry": "启动棋盘.command",
+  "version": "2026.10.24-auto-records",
+  "records": {
+    "directory": "棋谱",
+    "format": "UTF-8 TXT",
+    "filename": "先手名称：后手名称，先手胜或先手负.txt",
+    "duplicate_names": "append （2）, （3）, ... without overwriting"
+  }
 }

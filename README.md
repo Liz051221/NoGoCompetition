@@ -1,10 +1,12 @@
 # NoGo Mac 棋盘平台
 
-基于 Champion ONNX 引擎和 SAU 文本协议的本地浏览器棋盘。支持人机、双人、AI 自战、合法落点提示、手数、暂停和 JSON 棋谱导出。
+基于 Champion ONNX 引擎和 SAU 文本协议的本地浏览器棋盘。支持人机、双人、AI 自战、合法落点提示、手数、暂停、结束后自动保存 TXT 棋谱和 JSON 棋谱导出。
 
 macOS 13+，Intel / Apple Silicon，Python 3.11–3.13。首次安装需联网，之后可离线运行。
 
-详见 [Mac使用教程.md](Mac使用教程.md)。
+正常对局结束后，棋谱自动写入平台的 `棋谱/` 文件夹，逐手记录黑白方和落子坐标。双方名称默认 `A1`、`A2`，文件名例如 `A1：A2，先手胜.txt` 或 `A1：A2，先手负.txt`，同名追加序号。
+
+详见 [Mac使用教程.md](Mac使用教程.md)，旧版升级见 [更新说明.txt](更新说明.txt)。
 
 ```bash
 chmod +x *.command NoGoEngine

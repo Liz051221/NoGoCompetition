@@ -1,6 +1,7 @@
 """Local browser board; the bundled AI communicates over the SAU protocol."""
 from __future__ import annotations
 import argparse
+from datetime import datetime
 import json
 import os
 from pathlib import Path
@@ -13,6 +14,7 @@ import threading
 import time
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import quote
 from nogo_ai.rules import new_board, legal_moves, play_move, coord_to_index, index_to_coord
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -75,7 +77,7 @@ class Engine:
             self.log.close()
 
 class Game:
-    def __init__(self):
+    def __init__(self, record_dir=None):
         self.lock = threading.RLock()
         self.engines = {}
         self.board = new_board()
@@ -86,20 +88,36 @@ class Game:
         self.message = '选择模式，点击“开始新局”。'
         self.seconds = 2
         self.spent = {1: 0., -1: 0.}
+        self.record_dir = Path(record_dir) if record_dir is not None else ROOT / '棋谱'
+        self.names = {1: 'A1', -1: 'A2'}
+        self.started_at = None
+        self.ended_at = None
+        self.result = None
+        self.record_path = None
+        self.record_error = ''
 
     def close(self):
         for engine in self.engines.values():
             engine.close()
         self.engines.clear()
 
-    def start(self, mode, seconds):
+    def start(self, mode, seconds, first_name='A1', second_name='A2'):
         if mode not in ('hh', 'ha', 'ah', 'aa') or not 0.1 <= seconds <= 60:
             raise ValueError('无效的模式或思考时长')
+        names = {}
+        for side, name in ((1, first_name), (-1, second_name)):
+            if not isinstance(name, str) or not 1 <= len(name.strip()) <= 24 or any(ord(c) < 32 or ord(c) == 127 for c in name):
+                raise ValueError('双方名称需为 1–24 个字符，且不能含换行或控制字符')
+            names[side] = name.strip()
         self.close()
         self.board, self.side, self.history, self.over = new_board(), 1, [], False
         self.seconds, self.spent = seconds, {1: 0., -1: 0.}
         self.players = {1: 'human' if mode[0] == 'h' else 'ai', -1: 'human' if mode[1] == 'h' else 'ai'}
         self.message = '新局已开始。'
+        self.names = names
+        self.started_at = datetime.now().astimezone()
+        self.ended_at = self.result = self.record_path = None
+        self.record_error = ''
         try:
             for color in (1, -1):
                 if self.players[color] == 'ai':
@@ -112,6 +130,71 @@ class Game:
             self.message = '引擎启动失败，请安装依赖并运行 CheckEngine.command。'
             raise
 
+    def record_filename(self):
+        # Keep names in the record; make separators safe only in the filename.
+        def safe(name):
+            table = str.maketrans('/\\:*?"<>|', '／＼：＊？＂＜＞｜')
+            return name.translate(table).strip('. ') or '未命名'
+        return f'{safe(self.names[1])}：{safe(self.names[-1])}，{self.result or "进行中"}.txt'
+
+    def record_text(self):
+        lines = ['NoGo 不围棋棋谱',
+                 f'先手（黑方）：{self.names[1]}',
+                 f'后手（白方）：{self.names[-1]}',
+                 f'黑方类型：{"AI" if self.players[1] == "ai" else "人类"}',
+                 f'白方类型：{"AI" if self.players[-1] == "ai" else "人类"}',
+                 f'结果：{self.result or "进行中"}',
+                 f'对局说明：{self.message}',
+                 f'开始时间：{self.started_at.isoformat(timespec="seconds") if self.started_at else "未开始"}',
+                 f'结束时间：{self.ended_at.isoformat(timespec="seconds") if self.ended_at else "尚未结束"}',
+                 f'总手数：{len(self.history)}',
+                 '坐标：横纵轴均为 A–I，AA 在左上角；列、行从 1 开始。', '',
+                 '手数\t执棋方\t落子坐标\t列\t行']
+        for move in self.history:
+            color = '黑（先手）' if move['side'] == 1 else '白（后手）'
+            lines.append(f'{move["number"]}\t{color}\t{move["coord"]}\t{move["index"] % 9 + 1}\t{move["index"] // 9 + 1}')
+        return '\n'.join(lines) + '\n'
+
+    def save_record(self):
+        if self.record_path is not None:
+            return
+        created = None
+        try:
+            self.record_dir.mkdir(parents=True, exist_ok=True)
+            base = Path(self.record_filename())
+            number = 1
+            while True:
+                filename = base.name if number == 1 else f'{base.stem}（{number}）.txt'
+                path = self.record_dir / filename
+                try:
+                    output = path.open('x', encoding='utf-8', newline='\n')
+                except FileExistsError:
+                    number += 1
+                    continue
+                created = path
+                with output:
+                    output.write(self.record_text())
+                    output.flush()
+                    os.fsync(output.fileno())
+                self.record_path = path
+                self.record_error = ''
+                break
+        except OSError as exc:
+            if created is not None:
+                try:
+                    created.unlink()
+                except OSError:
+                    pass
+            self.record_error = f'自动保存失败：{exc}。请点击“导出棋谱 TXT”保存副本。'
+
+    def finish(self, winner):
+        self.over = True
+        self.ended_at = datetime.now().astimezone()
+        self.result = '平局' if winner is None else ('先手胜' if winner == 1 else '先手负')
+        self.message = '平局。' if winner is None else ('黑方' if winner == 1 else '白方') + '获胜：对方无合法落点。'
+        self.save_record()
+        self.close()
+
     def place(self, move, elapsed=0.):
         self.board = play_move(self.board, self.side, move)
         self.spent[self.side] += elapsed
@@ -119,9 +202,7 @@ class Game:
                              'coord': index_to_coord(move), 'index': move, 'seconds': round(elapsed, 3)})
         self.side = -self.side
         if not legal_moves(self.board, self.side):
-            self.over = True
-            self.message = ('白方' if self.side == 1 else '黑方') + '获胜：对方无合法落点。'
-            self.close()
+            self.finish(-self.side)
         else:
             self.message = '轮到' + ('黑方' if self.side == 1 else '白方') + '。'
 
@@ -149,6 +230,8 @@ class Game:
             self.place(move, elapsed)
         except Exception as exc:
             self.over = True
+            self.ended_at = datetime.now().astimezone()
+            self.result = '中止（未判胜负）'
             self.message = '对局中止（未判胜负）：' + str(exc)
             self.close()
             raise
@@ -156,6 +239,9 @@ class Game:
     def state(self):
         return dict(board=self.board, side=self.side, history=self.history, over=self.over,
                     message=self.message, players=self.players, spent=self.spent,
+                    names=self.names, result=self.result,
+                    record_filename=self.record_path.name if self.record_path else None,
+                    record_error=self.record_error,
                     legal=[] if self.over else legal_moves(self.board, self.side))
 
 def make_handler(game, token):
@@ -163,13 +249,15 @@ def make_handler(game, token):
         def log_message(self, *args):
             pass
 
-        def reply(self, status, data, content_type='application/json; charset=utf-8'):
+        def reply(self, status, data, content_type='application/json; charset=utf-8', filename=None):
             body = data if isinstance(data, bytes) else json.dumps(data, ensure_ascii=False).encode()
             self.send_response(status)
             self.send_header('Content-Type', content_type)
             self.send_header('Content-Length', str(len(body)))
             self.send_header('Cache-Control', 'no-store')
             self.send_header('X-Content-Type-Options', 'nosniff')
+            if filename:
+                self.send_header('Content-Disposition', "attachment; filename*=UTF-8''" + quote(filename, safe=''))
             self.end_headers()
             self.wfile.write(body)
 
@@ -180,6 +268,11 @@ def make_handler(game, token):
             if self.path == '/api/state':
                 with game.lock:
                     return self.reply(200, game.state())
+            if self.path == '/api/record':
+                with game.lock:
+                    return self.reply(200, game.record_text().encode('utf-8'),
+                                      'text/plain; charset=utf-8',
+                                      game.record_path.name if game.record_path else game.record_filename())
             self.reply(404, {'error': 'Not found'})
 
         def do_POST(self):
@@ -192,7 +285,8 @@ def make_handler(game, token):
                 data = json.loads(self.rfile.read(size) or b'{}')
                 with game.lock:
                     if self.path == '/api/new':
-                        game.start(data.get('mode', 'ha'), float(data.get('seconds', 2)))
+                        game.start(data.get('mode', 'ha'), float(data.get('seconds', 2)),
+                                   data.get('first_name', 'A1'), data.get('second_name', 'A2'))
                     elif self.path == '/api/move':
                         game.human(data.get('move'))
                     elif self.path == '/api/step':
