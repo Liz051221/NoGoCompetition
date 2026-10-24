@@ -1,0 +1,14 @@
+请先阅读同目录的《Mac使用教程.md》（可用文本编辑打开）。
+
+快速使用：
+1. 安装 Python 3.13 的 macOS universal2 安装包。
+2. 在终端进入本目录：chmod +x *.command NoGoEngine
+3. 运行：bash ./安装依赖.command
+4. 模型自检显示 "ok": true 后，双击“启动棋盘.command”。
+5. 浏览器中选择模式，点击“开始新局”，点击交叉点落子。
+6. 退出时在启动终端按 Control+C。
+
+支持 macOS 13+、Intel / Apple Silicon，Python 3.11–3.13。
+本次新增浏览器棋盘；保留原引擎、模型、命令行自战及第三方许可证。
+此版本用于本地训练和 SAU 协议演示，不包含 Windows SAU GUI，非赛事认证平台。
+当前通过 Linux 下模型、协议、对局和浏览器验证，尚未完成 Mac 实机验证。

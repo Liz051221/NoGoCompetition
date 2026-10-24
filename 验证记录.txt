@@ -1,0 +1,31 @@
+NoGo Mac 棋盘平台 — 本次验证记录
+
+执行环境：Linux x86_64 / Python 3.12 / Chromium。
+目标运行环境：macOS 13+，Intel 或 Apple Silicon，Python 3.11–3.13。
+未执行：Mac 实机安装、Safari 实机测试、正式赛事认证。
+
+模型：原 champion.onnx；SHA-256
+7b2e3e0c61d4f8a0a9210798ff625bb8c555bb33ca6282e882dd6c6749e27e89
+模型自检输出 ok: true，CPUExecutionProvider，policy_sum 约 0.999999914。
+
+unittest discover -s tests -v：5 个测试通过，20.000 秒。
+- 双人完整对局及无合法落点终局
+- 非法落子、禁止提子与自杀、参数检查
+- SAU AI 黑白双方实际落子及重开后的进程清理
+- 完整 SAU AI 自战并结束
+- HTTP 页面/状态/请求令牌/非法落子返回值
+
+Chromium 浏览器实际交互：
+- 点击棋盘，黑 AA / 白 BA，手数显示
+- 人类执黑落子后，AI 执白合法回应
+- AI 执黑先手落子
+- 暂停按钮、JSON 棋谱下载
+- 390 像素宽度布局无横向溢出
+- 未捕获到页面 JavaScript 错误
+
+安装脚本：非交互执行成功，复用虚拟环境并完成模型自检。
+脚本语法：bash -n 通过。
+引擎日志确认存在实际 worker_mcts 搜索及残局求解记录，而非仅返回合法后备着。
+
+本包未包含云环境的 .venv、运行日志、Git 元数据或缓存。
+首次在 Mac 使用仍需按教程联网安装本机依赖。

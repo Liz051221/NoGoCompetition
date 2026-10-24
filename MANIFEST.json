@@ -1,0 +1,221 @@
+{
+  "package_name": "NoGo_Mac_Board",
+  "runtime": "macOS 13+; Intel x86_64 or Apple Silicon arm64; Python 3.11-3.13",
+  "platform": "Local browser board with SAU stdin/stdout engine; human/human, human/AI and AI/AI",
+  "engine_entry": "NoGoEngine",
+  "model": {
+    "path": "models/champion.onnx",
+    "sha256": "7b2e3e0c61d4f8a0a9210798ff625bb8c555bb33ca6282e882dd6c6749e27e89",
+    "source_checkpoint_sha256": "11fbc52d6d194c3b940d7fad843d903b1b76a2305b6c8344beae0f778adbdbd4"
+  },
+  "clock": {
+    "total_seconds": 900,
+    "reserve_seconds": 180,
+    "search_budget_seconds": 720,
+    "per_move_cap_seconds": 60
+  },
+  "macos_native_validation": "Not run; Linux Python 3.12 model, integration and Chromium UI checks passed",
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 42,
+      "sha256": "b3751416cb808fd468bd9e4cc30347f5dbc7858e68f681e8b2024661881fe74e"
+    },
+    {
+      "path": "CheckEngine.command",
+      "bytes": 101,
+      "sha256": "95e6a070f6820d9cb04a8c9fc369fa7dfdbe31f96a3f57eead1e68744d513e17"
+    },
+    {
+      "path": "LICENSES/NumPy-OpenBLAS-LICENSE.txt",
+      "bytes": 48688,
+      "sha256": "e261222a74adff28f88160dac1c5cb302d93b67e9ca989eb83bf311e11a9970a"
+    },
+    {
+      "path": "LICENSES/ONNXRuntime-LICENSE.txt",
+      "bytes": 1094,
+      "sha256": "c250d6278f0b47a6439fb7592b08b58a55eb9f535aa49a1db63211c3f982b674"
+    },
+    {
+      "path": "LICENSES/ONNXRuntime-ThirdPartyNotices.txt",
+      "bytes": 333022,
+      "sha256": "e00f828e0a33de591a355ae6606d2625f5758da7d2c844db7821c9dd3e3647b6"
+    },
+    {
+      "path": "Mac使用教程.md",
+      "bytes": 8637,
+      "sha256": "27f5c47a3d05d778df5ccfc92ec410cd02bdc9c30720bdb82f9111534697ee84"
+    },
+    {
+      "path": "Mac使用教程.txt",
+      "bytes": 8637,
+      "sha256": "27f5c47a3d05d778df5ccfc92ec410cd02bdc9c30720bdb82f9111534697ee84"
+    },
+    {
+      "path": "NoGoEngine",
+      "bytes": 288,
+      "sha256": "d86970838ca356bc80bdc6f878ea0af6c2ee797aabe2425a88513df6d4adb8c8"
+    },
+    {
+      "path": "README.md",
+      "bytes": 661,
+      "sha256": "11c64da0bd47854a111d6e65c4b82ab0f9ce782038216b71f7be3225bf96923e"
+    },
+    {
+      "path": "engine_config.json",
+      "bytes": 480,
+      "sha256": "cac4858e8c2b875c14e50112b6d4e7cac66c6f849b821ec2313bce4af3fd7717"
+    },
+    {
+      "path": "models/champion.onnx",
+      "bytes": 4370660,
+      "sha256": "7b2e3e0c61d4f8a0a9210798ff625bb8c555bb33ca6282e882dd6c6749e27e89"
+    },
+    {
+      "path": "nogo_ai/__init__.py",
+      "bytes": 92,
+      "sha256": "ab539eabc37c53d8495d2280e5ccb4f72503d692170c5484ccf095f253a841ab"
+    },
+    {
+      "path": "nogo_ai/__main__.py",
+      "bytes": 81,
+      "sha256": "2cdd23d4f5cd6c3b3e4cb690ad16d560637767b9ca5b2a3cf129fcc0a5ebc82b"
+    },
+    {
+      "path": "nogo_ai/alphazero.py",
+      "bytes": 96124,
+      "sha256": "0ec8c75fbea8b2ff6336f4289cd6e9bd505280cf12f25cdd574be9270bc33b3c"
+    },
+    {
+      "path": "nogo_ai/cli.py",
+      "bytes": 115526,
+      "sha256": "0d07ef0e547300cb65f1762402c9682e86326e4e89bbb9de79f9730c61520063"
+    },
+    {
+      "path": "nogo_ai/competition_process.py",
+      "bytes": 5635,
+      "sha256": "e66cb100720fc9f1a7bffdf0f0fecb067af86652eeb0030e1cb8c03cfa116053"
+    },
+    {
+      "path": "nogo_ai/competition_runtime.py",
+      "bytes": 10614,
+      "sha256": "5eae984953be0811eda431860fe4ebc20665f66bf0d4bfd349a58e555fd9b870"
+    },
+    {
+      "path": "nogo_ai/endgame.py",
+      "bytes": 11078,
+      "sha256": "06a59c4add75232a4cd53707b0e6a26e137f736597eb6ed8c053446b4e50f4e8"
+    },
+    {
+      "path": "nogo_ai/inference_service.py",
+      "bytes": 5206,
+      "sha256": "cae298288157e1b282e16d91d1a1960a8307e30109833cf4fccd87da1c3547cd"
+    },
+    {
+      "path": "nogo_ai/mcts.py",
+      "bytes": 28448,
+      "sha256": "1d04fc80bf21b25df8d566a406c0aec9f5aa82d7dfcaf3c27b2593c92d1905e6"
+    },
+    {
+      "path": "nogo_ai/network.py",
+      "bytes": 7893,
+      "sha256": "d8f72aa2afe18696c1bca12030805425f07dccc5e6bd2a57f30901c2876de772"
+    },
+    {
+      "path": "nogo_ai/portable_onnx.py",
+      "bytes": 3381,
+      "sha256": "a7376e5873602a0250b8eb97d5ebba39b7501f6200d295e2891492b4fbe28144"
+    },
+    {
+      "path": "nogo_ai/protocol.py",
+      "bytes": 8096,
+      "sha256": "ba9fc66e9bba198bd8789995289102a4d38be5501a1cb5db3e83f93173d11c16"
+    },
+    {
+      "path": "nogo_ai/rules.py",
+      "bytes": 5447,
+      "sha256": "ff719de48d0ddb93707fbd64c54b631defaf22cfdb65acbf7ca5929e6ad3b7d9"
+    },
+    {
+      "path": "nogo_ai/symmetry.py",
+      "bytes": 1299,
+      "sha256": "1a572d1c45da09196ab04c9c09512a983450f6de3f523e359e08f93a14281aaf"
+    },
+    {
+      "path": "nogo_ai/torch_model.py",
+      "bytes": 18821,
+      "sha256": "f643330f30ae9888dbd5964bb0a30cc175644213e3838dddc699ce65d850b9f9"
+    },
+    {
+      "path": "nogo_ai/training_microbatch.py",
+      "bytes": 3412,
+      "sha256": "7e2b7490876780722907e8025accd6f3572fa5576c702db33ea77055beeb042b"
+    },
+    {
+      "path": "requirements-macos.txt",
+      "bytes": 37,
+      "sha256": "ad43e82178890daf36116e9c3b96f0f22366d25114a762d91f1663b04a6838f6"
+    },
+    {
+      "path": "run_match.command",
+      "bytes": 253,
+      "sha256": "2277c42073ab3ea3bdb41508e8b648f69db12719d8c2ec22243689f908895a0e"
+    },
+    {
+      "path": "tests/test_board_platform.py",
+      "bytes": 4044,
+      "sha256": "7b4a1a1ed4731fdd481b99ebe99c3c74eb0f67bb30daf807c09e9acb33eceb1c"
+    },
+    {
+      "path": "tools/__init__.py",
+      "bytes": 39,
+      "sha256": "293e12767ffda5fd5b47611b3a3a8dacc11b2c3de65a79f8c1f7ad552f67495f"
+    },
+    {
+      "path": "tools/board.html",
+      "bytes": 7805,
+      "sha256": "3f2b01a45fa2bfc31d43524c960ff63e42e08f65df84fc3e514e27abae7a5fcb"
+    },
+    {
+      "path": "tools/board_platform.py",
+      "bytes": 9494,
+      "sha256": "cacb6420a2520b3b09e557eded1e802ec370257abe0086883491bee0ca722a89"
+    },
+    {
+      "path": "tools/macos_platform.py",
+      "bytes": 5680,
+      "sha256": "35a90083e85809880a2e86e42ed1622bb619a54fe315c3c291cbd7e452d016ff"
+    },
+    {
+      "path": "tools/portable_engine.py",
+      "bytes": 5156,
+      "sha256": "e52927a2cd03c4931e026ea813c39f55a9c2ca1b8796f924e177869eb0795f87"
+    },
+    {
+      "path": "使用说明.txt",
+      "bytes": 822,
+      "sha256": "d53eddd73e33374c37f0b0ce1b1ebcbe14f1e3726e5c5b501c626d0a8d21adae"
+    },
+    {
+      "path": "启动棋盘.command",
+      "bytes": 389,
+      "sha256": "c2ba3f5fddc7fd4427331788af2430e83794505f1c0f6088bb4ec255d8a745d6"
+    },
+    {
+      "path": "安装依赖.command",
+      "bytes": 1531,
+      "sha256": "3bf4fff80f355b65dd0a71149a70b778630dd762138cf9d1a2bd7e639f730027"
+    },
+    {
+      "path": "棋盘界面.png",
+      "bytes": 104911,
+      "sha256": "1a05844c5d0fbf9818ba5b79b61681b98aac29a3ccd793d1e0a3b87cdba2f69c"
+    },
+    {
+      "path": "验证记录.txt",
+      "bytes": 1392,
+      "sha256": "35866a17f1e5a72feee2d578acb04ba1ea1fbfb1e4de45cb3114a40fd77facfd"
+    }
+  ],
+  "board_entry": "启动棋盘.command"
+}

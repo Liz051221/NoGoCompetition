@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+
+BASE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+if [ ! -x "$BASE/.venv/bin/python" ]; then
+  echo "NoGo macOS runtime is missing. Run 安装依赖.command first." >&2
+  exit 1
+fi
+cd "$BASE"
+exec "$BASE/.venv/bin/python" -m tools.portable_engine --root "$BASE" "$@"

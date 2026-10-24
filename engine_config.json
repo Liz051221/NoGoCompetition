@@ -1,0 +1,15 @@
+{
+  "name": "NoGoChampionSafe",
+  "source_checkpoint_sha256": "11fbc52d6d194c3b940d7fad843d903b1b76a2305b6c8344beae0f778adbdbd4",
+  "model_sha256": "7b2e3e0c61d4f8a0a9210798ff625bb8c555bb33ca6282e882dd6c6749e27e89",
+  "cpu_threads": 2,
+  "simulations": 200000,
+  "time_limit": 60.0,
+  "game_time_limit": 900.0,
+  "time_reserve": 180.0,
+  "cpuct": 1.45,
+  "endgame_moves": 16,
+  "endgame_nodes": 200000,
+  "root_tactical_weight": 0.2,
+  "inference_batch_size": 32
+}
