@@ -7,12 +7,14 @@
 </style>
 <main><header><h1>NoGo <small>不围棋</small></h1><small>9 × 9 · 本地 SAU 引擎棋盘</small></header>
 <section><div class="board-column"><div class="timers"><div id="timer-black" class="timer"><span id="name-black">先手 · 黑方</span><strong id="remaining-black">15:00</strong><small id="budget-black">思考 12:00 · 预留 03:00</small><small id="used-black">已用 00:00 · 本手 00:00</small></div><div id="timer-white" class="timer"><span id="name-white">后手 · 白方</span><strong id="remaining-white">15:00</strong><small id="budget-white">思考 12:00 · 预留 03:00</small><small id="used-white">已用 00:00 · 本手 00:00</small></div></div><canvas id="board" width="720" height="720" aria-label="九路不围棋棋盘，点击交叉点选择，随后确认落子"></canvas>
-<div class="confirm-actions"><button id="confirm" class="primary" disabled>确认落子</button><button id="cancel" disabled>取消选点</button></div><div id="selection" class="selection" role="status">请先开始新局。</div><footer>坐标与引擎一致：横、纵轴均为 A–I，AA 位于左上角。红圈表示上一手。</footer>
+<div class="confirm-actions"><button id="confirm" class="primary" disabled>确认落子</button><button id="cancel" disabled>取消选点</button></div><div id="selection" class="selection" role="status">请先开始新局。</div><footer>横坐标 A–I，纵坐标 1–9，A1 位于左上角，与导出棋谱一致。红圈表示上一手。</footer>
 <p>规则：黑先白后，轮流落子。<b>不能提掉对方棋子，不能自杀，不能停着。</b>轮到某方时没有合法落点，该方输。</p></div>
 <aside class="panel"><div id="status" class="status" role="status" aria-live="polite">正在连接…</div><div id="error" class="error" role="alert"></div>
 <label for="mode">对局模式</label><select id="mode"><option value="ha">我执黑 · AI 执白</option><option value="ah">AI 执黑 · 我执白</option><option value="hh">双人同机对弈</option><option value="aa">AI 对战 AI</option></select>
 <label for="first-name">先手名称（黑方）</label><input id="first-name" type="text" value="A1" maxlength="24">
 <label for="second-name">后手名称（白方）</label><input id="second-name" type="text" value="A2" maxlength="24">
+<label for="venue">比赛地点</label><input id="venue" type="text" value="本地" maxlength="80">
+<label for="event-name">赛事名称</label><input id="event-name" type="text" value="本地对局" maxlength="80">
 <label for="seconds">AI 搜索时长</label><select id="seconds"><option value="60">长搜索 · 单手上限 60 秒</option><option value="30">单手上限 30 秒</option><option value="10">单手上限 10 秒</option><option value="5">单手上限 5 秒</option><option value="2">快速体验 · 单手上限 2 秒</option></select>
 <p class="muted" style="font-size:13px">每方总计 15 分钟：思考 12 分钟＋预留 3 分钟。AI 按剩余预算分配搜索时间，遇到必胜或唯一合法着可提前结束。</p>
 <button id="new" class="primary">开始新局</button><button id="pause" style="margin-top:8px" disabled>暂停对局</button>
@@ -27,7 +29,7 @@ let state=null,busy=false,notice='',operation='',pending=null,receivedAt=0,synci
 function draw(){
  ctx.clearRect(0,0,720,720);ctx.fillStyle='#dfbb80';ctx.fillRect(0,0,720,720);
  ctx.strokeStyle='#695533';ctx.lineWidth=1.3;
- for(let n=0;n<9;n++){let p=64+n*74;ctx.beginPath();ctx.moveTo(64,p);ctx.lineTo(656,p);ctx.moveTo(p,64);ctx.lineTo(p,656);ctx.stroke();ctx.fillStyle='#604d31';ctx.font='17px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String.fromCharCode(65+n),p,30);ctx.fillText(String.fromCharCode(65+n),30,p)}
+ for(let n=0;n<9;n++){let p=64+n*74;ctx.beginPath();ctx.moveTo(64,p);ctx.lineTo(656,p);ctx.moveTo(p,64);ctx.lineTo(p,656);ctx.stroke();ctx.fillStyle='#604d31';ctx.font='17px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String.fromCharCode(65+n),p,30);ctx.fillText(String(n+1),30,p)}
  for(let y of [2,4,6])for(let x of [2,4,6]){if((x===4)!==(y===4))continue;ctx.beginPath();ctx.arc(64+x*74,64+y*74,4,0,Math.PI*2);ctx.fill()}
  if(!state)return;
  if($('hints').checked&&!state.over)for(let i of state.legal){ctx.fillStyle='rgba(40,88,55,.22)';ctx.beginPath();ctx.arc(64+i%9*74,64+Math.floor(i/9)*74,6,0,Math.PI*2);ctx.fill()}
@@ -37,7 +39,7 @@ function draw(){
  if(state.history.length){let i=state.history.at(-1).index;ctx.strokeStyle='#d54c35';ctx.lineWidth=3;ctx.beginPath();ctx.arc(64+i%9*74,64+Math.floor(i/9)*74,34,0,Math.PI*2);ctx.stroke()}
 }
 function humanTurn(){return state&&!state.over&&!state.paused&&!state.thinking&&state.active_side!==null&&state.players[String(state.side)]==='human'}
-function coord(i){return String.fromCharCode(65+i%9)+String.fromCharCode(65+Math.floor(i/9))}
+function coord(i){return String.fromCharCode(65+i%9)+String(Math.floor(i/9)+1)}
 function duration(seconds,remaining=false){let n=Math.max(0,remaining?Math.ceil(seconds):Math.floor(seconds));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 function renderClocks(){
  if(!state)return;let delta=Math.max(0,(performance.now()-receivedAt)/1000);
@@ -74,15 +76,15 @@ function adopt(s){
 async function api(path,data){let r=await fetch('/api/'+path,{method:'POST',headers:{'Content-Type':'application/json','X-NoGo-Token':token},body:JSON.stringify(data||{})});let s=await r.json();if(!r.ok)throw Error(s.error||'请求失败');return s}
 async function sync(){if(syncing)return;syncing=true;try{let r=await fetch('/api/state');if(!r.ok)throw Error('无法连接');adopt(await r.json())}catch{notice='无法连接服务，请检查启动终端。';if(state)render();else $('status').textContent=notice}finally{syncing=false}}
 async function act(path,data){if(busy)return;busy=true;operation=path;notice='';render();try{adopt(await api(path,data))}catch(e){notice=e.message;await sync()}finally{busy=false;render()}}
-$('new').onclick=async()=>{if(busy||state?.thinking)return;if(state?.history.length&&!state.over&&!confirm('结束当前对局并开始新局？'))return;pending=null;await act('new',{mode:$('mode').value,seconds:Number($('seconds').value),first_name:$('first-name').value,second_name:$('second-name').value})};
+$('new').onclick=async()=>{if(busy||state?.thinking)return;if(state?.history.length&&!state.over&&!confirm('结束当前对局并开始新局？'))return;pending=null;await act('new',{mode:$('mode').value,seconds:Number($('seconds').value),first_name:$('first-name').value,second_name:$('second-name').value,venue:$('venue').value,event_name:$('event-name').value})};
 $('pause').onclick=()=>{if(state)act('pause',{paused:!(state.paused||state.pause_pending)})};
 $('hints').onchange=draw;$('numbers').onchange=draw;
 c.onclick=e=>{if(busy||!humanTurn())return;let r=c.getBoundingClientRect(),x=Math.round(((e.clientX-r.left)*720/r.width-64)/74),y=Math.round(((e.clientY-r.top)*720/r.height-64)/74);if(x<0||x>=9||y<0||y>=9)return;let move=y*9+x;if(!state.legal.includes(move)){notice='此处不是合法落点，请重新选择。';render();return}notice='';pending=move;render()};
 $('cancel').onclick=()=>{pending=null;render()};
 $('confirm').onclick=()=>{if(busy||!humanTurn()||pending===null)return;act('move',{move:pending,expected_move_no:state.history.length,game_id:state.game_id})};
 $('download-txt').onclick=()=>{if(!state||busy||!state.history.length)return;let a=document.createElement('a');a.href='/api/record';a.click()};
-$('download').onclick=()=>{if(!state)return;let u=URL.createObjectURL(new Blob([JSON.stringify({format:'nogo-local-sau-v2',exported_at:new Date().toISOString(),...state},null,2)],{type:'application/json'}));let a=document.createElement('a');a.href=u;a.download='NoGo-'+Date.now()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+$('download').onclick=()=>{if(!state)return;let u=URL.createObjectURL(new Blob([JSON.stringify({format:'nogo-local-sau-v3',exported_at:new Date().toISOString(),...state},null,2)],{type:'application/json'}));let a=document.createElement('a');a.href=u;a.download='NoGo-'+Date.now()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
 setInterval(()=>{if(state&&!busy&&!state.thinking&&!state.paused&&!state.over&&state.active_side!==null&&state.players[String(state.side)]==='ai')act('step')},250);
 setInterval(sync,500);setInterval(renderClocks,100);
-sync().then(()=>{if(state){$('first-name').value=state.names['1'];$('second-name').value=state.names['-1'];$('seconds').value=String(state.move_cap_seconds)}});draw();
+sync().then(()=>{if(state){$('first-name').value=state.names['1'];$('second-name').value=state.names['-1'];$('venue').value=state.venue;$('event-name').value=state.event_name;$('seconds').value=String(state.move_cap_seconds)}});draw();
 </script></html>

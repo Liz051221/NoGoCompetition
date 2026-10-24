@@ -91,6 +91,8 @@ class Game:
         self.spent = {1: 0., -1: 0.}
         self.record_dir = Path(record_dir) if record_dir is not None else ROOT / '棋谱'
         self.names = {1: 'A1', -1: 'A2'}
+        self.venue = '本地'
+        self.event_name = '本地对局'
         self.started_at = None
         self.ended_at = None
         self.result = None
@@ -154,7 +156,7 @@ class Game:
             engine.close()
         self.engines.clear()
 
-    def start(self, mode, seconds=60, first_name='A1', second_name='A2'):
+    def start(self, mode, seconds=60, first_name='A1', second_name='A2', venue='本地', event_name='本地对局'):
         if mode not in ('hh', 'ha', 'ah', 'aa') or not 0.1 <= seconds <= 60:
             raise ValueError('无效的模式或思考时长')
         if self.thinking:
@@ -164,12 +166,17 @@ class Game:
             if not isinstance(name, str) or not 1 <= len(name.strip()) <= 24 or any(ord(c) < 32 or ord(c) == 127 for c in name):
                 raise ValueError('双方名称需为 1–24 个字符，且不能含换行或控制字符')
             names[side] = name.strip()
+        for value in (venue, event_name):
+            if not isinstance(value, str) or not 1 <= len(value.strip()) <= 80 or any(ord(c) < 32 or ord(c) == 127 for c in value):
+                raise ValueError('比赛地点和赛事名称需为 1–80 个字符，且不能含换行或控制字符')
         self.close()
         self.board, self.side, self.history, self.over = new_board(), 1, [], False
         self.seconds, self.spent = seconds, {1: 0., -1: 0.}
         self.players = {1: 'human' if mode[0] == 'h' else 'ai', -1: 'human' if mode[1] == 'h' else 'ai'}
         self.message = '新局已开始。'
         self.names = names
+        self.venue = venue.strip()
+        self.event_name = event_name.strip()
         self.started_at = datetime.now().astimezone()
         self.ended_at = self.result = self.record_path = None
         self.record_error = ''
@@ -206,25 +213,25 @@ class Game:
         return f'{first}vs{second}，{result}.txt'
 
     def record_text(self):
-        lines = ['NoGo 不围棋棋谱',
-                 f'先手（黑方）：{self.names[1]}',
-                 f'后手（白方）：{self.names[-1]}',
-                 f'黑方类型：{"AI" if self.players[1] == "ai" else "人类"}',
-                 f'白方类型：{"AI" if self.players[-1] == "ai" else "人类"}',
-                 f'结果：{self.result or "进行中"}',
-                 f'对局说明：{self.message}',
-                 f'开始时间：{self.started_at.isoformat(timespec="seconds") if self.started_at else "未开始"}',
-                 f'结束时间：{self.ended_at.isoformat(timespec="seconds") if self.ended_at else "尚未结束"}',
-                 f'总手数：{len(self.history)}',
-                 f'每方总时间：{self.total_seconds:g} 秒（思考 {self.total_seconds-self.reserve_seconds:g} 秒＋预留 {self.reserve_seconds:g} 秒）',
-                 f'先手累计用时：{self.clock_values()[1]["used"]:.3f} 秒',
-                 f'后手累计用时：{self.clock_values()[-1]["used"]:.3f} 秒',
-                 '坐标：横纵轴均为 A–I，AA 在左上角；列、行从 1 开始。', '',
-                 '手数\t执棋方\t落子坐标\t列\t行\t思考秒数']
+        def field(value):
+            # The supplied NG grammar has no delimiter-escaping convention.
+            # Use readable fullwidth forms inside metadata, keeping six fields.
+            return value.translate(str.maketrans('[];()\\', '［］；（）＼'))
+        result = {'先手负': '后手胜', '中止（未判胜负）': '中止'}.get(self.result, self.result or '进行中')
+        date = self.started_at.strftime('%Y.%m.%d %H:%M') if self.started_at else '未开始'
+        header = ''.join(f'[{field(value)}]' for value in
+                         ('NG', self.names[1], self.names[-1], result,
+                          date + ' ' + self.venue, self.event_name))
+        nodes = []
         for move in self.history:
-            color = '黑（先手）' if move['side'] == 1 else '白（后手）'
-            lines.append(f'{move["number"]}\t{color}\t{move["coord"]}\t{move["index"] % 9 + 1}\t{move["index"] // 9 + 1}\t{move["seconds"]:.3f}')
-        return '\n'.join(lines) + '\n'
+            color = 'B' if move['side'] == 1 else 'W'
+            coord = f'{chr(65 + move["index"] % 9)}{move["index"] // 9 + 1}'
+            node = f'{color}[{coord}]'
+            mark = move.get('mark')
+            if type(mark) is int and mark in (-2, -1, 0, 1, 2):
+                node += f'MARK[{mark}]'
+            nodes.append(';' + node)
+        return '(' + header + ''.join(nodes) + ')\n'
 
     def save_record(self):
         if self.record_path is not None:
@@ -277,7 +284,8 @@ class Game:
         next_board = play_move(self.board, self.side, move)
         self.charge_clock()
         self.history.append({'number': len(self.history)+1, 'side': self.side,
-                             'coord': index_to_coord(move), 'index': move, 'seconds': round(self.turn_spent, 3)})
+                             'coord': f'{chr(65 + move % 9)}{move // 9 + 1}',
+                             'index': move, 'seconds': round(self.turn_spent, 3)})
         self.board = next_board
         self.side = -self.side
         self.turn_spent = 0.
@@ -314,7 +322,7 @@ class Game:
             self.thinking = True
             side, game_id = self.side, self.game_id
             engine = self.engines[side]
-            command = 'new black' if not self.history else 'move ' + self.history[-1]['coord']
+            command = 'new black' if not self.history else 'move ' + index_to_coord(self.history[-1]['index'])
             clock = self.clock_values()[side]
         try:
             engine.send(f'clock {clock["thinking_remaining"]:.6f}')
@@ -350,6 +358,9 @@ class Game:
         return dict(board=self.board, side=self.side, history=list(self.history), over=self.over,
                     message=self.message, players=self.players, spent=dict(self.spent),
                     names=self.names, result=self.result, game_id=self.game_id, server_time=self.now(),
+                    venue=self.venue, event_name=self.event_name,
+                    started_at=self.started_at.isoformat() if self.started_at else None,
+                    ended_at=self.ended_at.isoformat() if self.ended_at else None,
                     clocks=self.clock_values(), total_seconds=self.total_seconds, reserve_seconds=self.reserve_seconds,
                     active_side=self.side if self.turn_started is not None else None,
                     paused=self.paused, pause_pending=self.pause_pending, thinking=self.thinking,
@@ -400,7 +411,8 @@ def make_handler(game, token):
                 with game.lock:
                     if self.path == '/api/new':
                         game.start(data.get('mode', 'ha'), float(data.get('seconds', 60)),
-                                   data.get('first_name', 'A1'), data.get('second_name', 'A2'))
+                                   data.get('first_name', 'A1'), data.get('second_name', 'A2'),
+                                   data.get('venue', '本地'), data.get('event_name', '本地对局'))
                     elif self.path == '/api/move':
                         game.human(data.get('move'), data.get('expected_move_no'), data.get('game_id'))
                     elif self.path == '/api/step':

@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+import re
 from pathlib import Path
 import random
 import tempfile
@@ -130,16 +132,14 @@ class BoardTests(unittest.TestCase):
                 winner = '我的模型' if result == '先手胜' else '我'
                 self.assertEqual(game.record_path.name, f'我的模型vs我，{winner}胜.txt')
                 text = game.record_path.read_text(encoding='utf-8')
-                self.assertIn(f'结果：{result}', text)
-                self.assertIn('先手（黑方）：我的模型', text)
-                rows = [line.split('\t') for line in text.splitlines() if line[:1].isdigit()]
+                outcome = '先手胜' if result == '先手胜' else '后手胜'
+                self.assertTrue(text.startswith(f'([NG][我的模型][我][{outcome}]'))
+                rows = re.findall(r';([BW])\[([A-I][1-9])\]', text)
                 self.assertEqual(len(rows), len(game.history))
                 for row, move in zip(rows, game.history):
-                    self.assertEqual(row[0], str(move['number']))
-                    self.assertEqual(row[1], '黑（先手）' if move['side'] == 1 else '白（后手）')
-                    self.assertEqual(row[2], move['coord'])
-                    self.assertEqual(row[3:5], [str(move['index'] % 9 + 1), str(move['index'] // 9 + 1)])
-                    self.assertAlmostEqual(float(row[5]), move['seconds'], places=3)
+                    self.assertEqual(row[0], 'B' if move['side'] == 1 else 'W')
+                    self.assertEqual(row[1], move['coord'])
+                    self.assertEqual(row[1], f'{chr(65 + move["index"] % 9)}{move["index"] // 9 + 1}')
 
     def test_auto_record_does_not_overwrite_previous_game(self):
         game = self.game()
@@ -153,7 +153,7 @@ class BoardTests(unittest.TestCase):
             game.save_record()
         self.assertEqual([p.name for p in paths], ['A1vsA2，A1胜.txt', 'A1vsA2，A1胜（2）.txt'])
         self.assertEqual(len(list(self.record_dir.glob('*.txt'))), 2)
-        self.assertTrue(all(p.read_text().count('黑（先手）') == 39 for p in paths))
+        self.assertTrue(all(p.read_text().count(';B[') == 39 for p in paths))
 
     def test_failed_auto_save_preserves_result_and_text(self):
         self.record_dir.parent.mkdir(parents=True, exist_ok=True)
@@ -166,7 +166,7 @@ class BoardTests(unittest.TestCase):
         self.assertIn('获胜', game.message)
         self.assertIsNone(game.record_path)
         self.assertIn('自动保存失败', game.state()['record_error'])
-        self.assertIn('结果：先手胜', game.record_text())
+        self.assertIn('[先手胜]', game.record_text())
         self.assertIn(game.history[-1]['coord'], game.record_text())
 
     def test_player_names_cannot_escape_record_directory(self):
@@ -175,10 +175,35 @@ class BoardTests(unittest.TestCase):
         while not game.over:
             game.human(legal_moves(game.board, game.side)[0])
         self.assertEqual(game.record_path.parent.resolve(), self.record_dir.resolve())
-        self.assertIn('先手（黑方）：../模型/1', game.record_path.read_text())
+        self.assertIn('[../模型/1]', game.record_path.read_text())
         with self.assertRaises(ValueError):
             game.start('hh', 2, '名称\n含换行', 'A2')
         self.assertTrue(game.over)
+
+    def test_record_matches_supplied_ng_example(self):
+        game = self.game()
+        game.start('hh', 2, '参赛队B', '参赛队W', '重庆', '2017 CCGC')
+        game.started_at = datetime.fromisoformat('2017-07-29T14:00:00+08:00')
+        for move in [39, 40, 31, 30, 49, 41, 50, 32, 42]:
+            game.human(move)
+        game.history[0]['mark'] = 1
+        game.finish(1)
+        expected = '([NG][参赛队B][参赛队W][先手胜][2017.07.29 14:00 重庆][2017 CCGC];B[D5]MARK[1];W[E5];B[E4];W[D4];B[E6];W[F5];B[F6];W[F4];B[G5])\n'
+        self.assertEqual(game.record_path.read_text(), expected)
+        self.assertEqual(game.record_text(), expected)
+
+    def test_ng_metadata_delimiters_cannot_break_header(self):
+        game = self.game()
+        game.start('hh', 2, '队[1]', '队(2)', '场地;一', '赛]事[\\')
+        game.human(0)
+        text = game.record_text()
+        header, moves = text.strip()[1:-1].split(';', 1)
+        fields = re.findall(r'\[([^\[\]]*)\]', header)
+        self.assertEqual(len(fields), 6)
+        self.assertEqual(fields[:4], ['NG', '队［1］', '队（2）', '进行中'])
+        self.assertTrue(fields[4].endswith('场地；一'))
+        self.assertEqual(fields[5], '赛］事［＼')
+        self.assertEqual(moves, 'B[A1]')
 
 if __name__ == '__main__':
     unittest.main()

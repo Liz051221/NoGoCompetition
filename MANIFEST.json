@@ -43,13 +43,13 @@
     },
     {
       "path": "Mac使用教程.md",
-      "bytes": 12636,
-      "sha256": "2888142ae464b738679030aab10631f490e007a09f93be947a6a9ede2d01cb48"
+      "bytes": 13872,
+      "sha256": "5cb0c1961e1b97074950f18e357293810146dc307bc3ccb0ed2c879810c5ac52"
     },
     {
       "path": "Mac使用教程.txt",
-      "bytes": 12636,
-      "sha256": "2888142ae464b738679030aab10631f490e007a09f93be947a6a9ede2d01cb48"
+      "bytes": 13872,
+      "sha256": "5cb0c1961e1b97074950f18e357293810146dc307bc3ccb0ed2c879810c5ac52"
     },
     {
       "path": "NoGoEngine",
@@ -58,8 +58,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 1242,
-      "sha256": "7f8602b6fa364441c760dcdd18d5c66ae16d9208e08b71c86e0cc1a7008e1528"
+      "bytes": 1394,
+      "sha256": "23dc569035b083cb0225006cb23057b9b63b32f4b9402209e5f1f45b8c37c635"
     },
     {
       "path": "engine_config.json",
@@ -163,8 +163,8 @@
     },
     {
       "path": "tests/test_board_platform.py",
-      "bytes": 8454,
-      "sha256": "e536327897197ea7a3adcda0cc04cd5b2fb9b3d612fcddab67f35e9ff1a54f99"
+      "bytes": 9572,
+      "sha256": "005dfe4fca707197df911164f4bbf6b7290c077fe414a863d7c2252a00dcb0eb"
     },
     {
       "path": "tests/test_clocks.py",
@@ -178,13 +178,13 @@
     },
     {
       "path": "tools/board.html",
-      "bytes": 13557,
-      "sha256": "6291b9e619bb5357b14bf815b2034372b915f7ec615168ee3b27235b7f1028bf"
+      "bytes": 13878,
+      "sha256": "886420c51d9bea3a5524c5513da36e21fdaf2ff0aa5e2b8e4ae5c1893839bb29"
     },
     {
       "path": "tools/board_platform.py",
-      "bytes": 20662,
-      "sha256": "88e1107937298026e40f7a95d427ce0e07784f9c0b599a1fd319e4badc33216c"
+      "bytes": 21158,
+      "sha256": "de925135c13d8052f71416b881f861c0c2c40dbc1c9b137cf3e11e745d414a66"
     },
     {
       "path": "tools/macos_platform.py",
@@ -198,8 +198,8 @@
     },
     {
       "path": "使用说明.txt",
-      "bytes": 1129,
-      "sha256": "16c4a4bdb581fe46fcfaf4520e26853a0ce865e475f1d9424ee080285cf61d7e"
+      "bytes": 1179,
+      "sha256": "24a24e54bb649bd9d937e33581a6e83bc9dcf674a4593cfbea7005238420f31c"
     },
     {
       "path": "启动棋盘.command",
@@ -213,27 +213,37 @@
     },
     {
       "path": "更新说明.txt",
-      "bytes": 2450,
-      "sha256": "0620af162ac21b5918dd2df93c6564d973dc5316d2a88f038f2509fd59ac37e8"
+      "bytes": 2897,
+      "sha256": "080549ee1ff2d21ae4585d8ed4d96b8f92b24916c0ccd0342f8abe4272007011"
     },
     {
       "path": "棋盘界面.png",
-      "bytes": 150904,
-      "sha256": "b755e4e1607bf096353dce3ba7c97a8879b4fe4acabbf7d3c20a74b6883daf27"
+      "bytes": 324145,
+      "sha256": "de8be3778884e9445a02bfd30460fbb3786391c7a26c51bd47ef3fc1028d878c"
     },
     {
       "path": "验证记录.txt",
-      "bytes": 2868,
-      "sha256": "2c1b0f69a54f41ed7bebae082f343fe9cbb07b1d8c246ba6ec5ae82cce48b590"
+      "bytes": 3349,
+      "sha256": "6b4e8ac473d2c60e0f842baf8b9a2bc224252ef13c1c6a7bf0c09ab12070e465"
     }
   ],
   "board_entry": "启动棋盘.command",
-  "version": "2026.10.24-record-winner-names",
+  "version": "2026.10.24-ng-record-format",
   "records": {
     "directory": "棋谱",
-    "format": "UTF-8 TXT",
+    "format": "UTF-8 NG: ([NG][black team][white team][result][date time venue][event];B[D5];W[E5])",
     "filename": "先手名称vs后手名称，胜者名称胜.txt",
-    "duplicate_names": "append （2）, （3）, ... without overwriting"
+    "duplicate_names": "append （2）, （3）, ... without overwriting",
+    "coordinates": "A-I columns and 1-9 rows, A1 at top left; original SAU protocol remains internal",
+    "metadata_fields": [
+      "NG",
+      "black team",
+      "white team",
+      "先手胜/后手胜/平局",
+      "YYYY.MM.DD HH:MM venue",
+      "event name"
+    ],
+    "annotations": "Optional MARK[-2..2], omitted if no evaluation exists"
   },
   "board_clock": {
     "total_seconds": 900,
