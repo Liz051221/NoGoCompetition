@@ -56,6 +56,8 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=default_root)
     parser.add_argument("--self-test", action="store_true")
     parser.add_argument("--move-seconds", type=float, help="Local GUI search cap; original config stays unchanged")
+    parser.add_argument("--game-seconds", type=float, help="Local referee total clock")
+    parser.add_argument("--reserve-seconds", type=float, help="Time kept out of neural search")
     parser.add_argument("--search-worker", action="store_true")
     options = parser.parse_args()
     root = options.root.resolve()
@@ -69,6 +71,14 @@ def main() -> int:
         if not 0.1 <= options.move_seconds <= 60:
             parser.error("--move-seconds must be between 0.1 and 60")
         config["time_limit"] = options.move_seconds
+    if options.game_seconds is not None:
+        if not 0 < options.game_seconds <= 86400:
+            parser.error("--game-seconds must be between 0 and 86400")
+        config["game_time_limit"] = options.game_seconds
+    if options.reserve_seconds is not None:
+        if not 0 <= options.reserve_seconds < config["game_time_limit"]:
+            parser.error("--reserve-seconds must be below the total game clock")
+        config["time_reserve"] = options.reserve_seconds
     engine = None
     if options.self_test:
         from nogo_ai.rules import BLACK, new_board

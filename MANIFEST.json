@@ -43,13 +43,13 @@
     },
     {
       "path": "Mac使用教程.md",
-      "bytes": 10831,
-      "sha256": "8db74f2224321e6c5659817abfbb5a7dee391cbee8e2599ad7af3d98f4e0348d"
+      "bytes": 12600,
+      "sha256": "a5082385e4b4c0b82bc4a4e9997685b4db57f2d9b42b3faaf91eb1c56585fec4"
     },
     {
       "path": "Mac使用教程.txt",
-      "bytes": 10831,
-      "sha256": "8db74f2224321e6c5659817abfbb5a7dee391cbee8e2599ad7af3d98f4e0348d"
+      "bytes": 12600,
+      "sha256": "a5082385e4b4c0b82bc4a4e9997685b4db57f2d9b42b3faaf91eb1c56585fec4"
     },
     {
       "path": "NoGoEngine",
@@ -58,8 +58,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 994,
-      "sha256": "5fb5fa3f18512b095e4f60d449af4750b679e02f22264a97582e32b8dda4cd57"
+      "bytes": 1252,
+      "sha256": "bb2468359f18d1babfb6d46f3afe6671d6049dfba11d297a2ea1477f9466eba2"
     },
     {
       "path": "engine_config.json",
@@ -98,8 +98,8 @@
     },
     {
       "path": "nogo_ai/competition_runtime.py",
-      "bytes": 10614,
-      "sha256": "5eae984953be0811eda431860fe4ebc20665f66bf0d4bfd349a58e555fd9b870"
+      "bytes": 11242,
+      "sha256": "30f3c078a4e6abc0579bf95cec8ce5a6b2242bac61958d21fc48ba18e58be0f5"
     },
     {
       "path": "nogo_ai/endgame.py",
@@ -163,8 +163,13 @@
     },
     {
       "path": "tests/test_board_platform.py",
-      "bytes": 8305,
-      "sha256": "b0383714462652f58e78646b2a48e09dfced40f7c936cd4713db13db1b954f2d"
+      "bytes": 8391,
+      "sha256": "1151921d39839393130362891d8601721fa36fa60ce81d0ddaa8f8c11559832f"
+    },
+    {
+      "path": "tests/test_clocks.py",
+      "bytes": 7185,
+      "sha256": "fe04418b323f42701772a9d48bfb8df75c41b0f8a8635e795e4568d93ea26a68"
     },
     {
       "path": "tools/__init__.py",
@@ -173,13 +178,13 @@
     },
     {
       "path": "tools/board.html",
-      "bytes": 8908,
-      "sha256": "6d8232a9c644c7da925625782c59f36b334091492b709ec7a2186a7fa56ebc0c"
+      "bytes": 13557,
+      "sha256": "6291b9e619bb5357b14bf815b2034372b915f7ec615168ee3b27235b7f1028bf"
     },
     {
       "path": "tools/board_platform.py",
-      "bytes": 14364,
-      "sha256": "67593857354ebf91f71e5c08dee7dc48e82158f1068406a6005fcbf3b1ac32b7"
+      "bytes": 20285,
+      "sha256": "3789f83381445788840b1d0bd22718b105ae192f637d29c2acd2bc3be40a47c9"
     },
     {
       "path": "tools/macos_platform.py",
@@ -188,13 +193,13 @@
     },
     {
       "path": "tools/portable_engine.py",
-      "bytes": 5156,
-      "sha256": "e52927a2cd03c4931e026ea813c39f55a9c2ca1b8796f924e177869eb0795f87"
+      "bytes": 5814,
+      "sha256": "3bdc8a9678ea69b5b6bda5e74db84f6403c07b7b489db1ef86124cac41e59311"
     },
     {
       "path": "使用说明.txt",
-      "bytes": 995,
-      "sha256": "53b8805140e9c49e20fa32109fac0c0063ab10a5335667537fe57eae0c99dfc3"
+      "bytes": 1129,
+      "sha256": "16c4a4bdb581fe46fcfaf4520e26853a0ce865e475f1d9424ee080285cf61d7e"
     },
     {
       "path": "启动棋盘.command",
@@ -208,26 +213,35 @@
     },
     {
       "path": "更新说明.txt",
-      "bytes": 1591,
-      "sha256": "3baaf4138849bb3a01ef78271e2e303f8b3c11784eefc8819c7354519f3b1a9d"
+      "bytes": 2056,
+      "sha256": "05a9401c9d9748b6df1ca5e5b4f19e1d6cdda4627f58a10e25376e54a532bc0d"
     },
     {
       "path": "棋盘界面.png",
-      "bytes": 286995,
-      "sha256": "7ff6b4ff3034b23dad4391e575cf8ffa6f18deffcad3a196ac70154a0c447af2"
+      "bytes": 150904,
+      "sha256": "b755e4e1607bf096353dce3ba7c97a8879b4fe4acabbf7d3c20a74b6883daf27"
     },
     {
       "path": "验证记录.txt",
-      "bytes": 1865,
-      "sha256": "f3afa8254b5d7eaf5309a9e0ddd1d6a701fd51c5f8f0457c4a1f76cd899e6c36"
+      "bytes": 2679,
+      "sha256": "ec911775c7c1aef6c6645590767163b4b06dffea9a2fd265ccf5083c546e91e4"
     }
   ],
   "board_entry": "启动棋盘.command",
-  "version": "2026.10.24-auto-records",
+  "version": "2026.10.24-clocks-confirm-long-search",
   "records": {
     "directory": "棋谱",
     "format": "UTF-8 TXT",
     "filename": "先手名称：后手名称，先手胜或先手负.txt",
     "duplicate_names": "append （2）, （3）, ... without overwriting"
-  }
+  },
+  "board_clock": {
+    "total_seconds": 900,
+    "thinking_seconds": 720,
+    "reserve_seconds": 180,
+    "timeout": "loss",
+    "pause": "clock stops after current AI move finishes"
+  },
+  "default_ai_move_cap_seconds": 60,
+  "human_moves": "select an intersection, then explicitly confirm; selection time is counted"
 }

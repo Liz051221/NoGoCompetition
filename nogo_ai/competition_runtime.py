@@ -210,6 +210,15 @@ class GuardedSearcher:
 class CompetitionProtocol(SAUNoGoEngine):
     def handle_line(self, line):
         parts = line.replace("\x00", "").lstrip("\ufeff").split()
+        # Optional local-referee extension; standard SAU commands stay unchanged.
+        if len(parts) == 2 and parts[0].lower() == "clock":
+            try:
+                remaining = float(parts[1])
+                if 0 <= remaining < float("inf"):
+                    self.referee_search_remaining = remaining
+            except ValueError:
+                pass
+            return None
         timed = bool(parts) and parts[0].lower() in {"new", "move", "error"}
         started = time.perf_counter()
         previous = 0.0 if parts and parts[0].lower() == "new" else self.search_seconds
@@ -222,6 +231,9 @@ class CompetitionProtocol(SAUNoGoEngine):
 
     def _choose_and_play(self):
         usable = max(0.0, self.config.game_time_limit - max(0.0, self.config.time_reserve))
+        # Include the referee's actual turn clock, including time between requests.
+        if hasattr(self, "referee_search_remaining"):
+            self.search_seconds = max(self.search_seconds, usable - self.referee_search_remaining)
         remaining = max(0.0, usable - self.search_seconds)
         if self.config.game_time_limit > 0 and remaining < 0.05:
             self._log("search skipped: usable game clock exhausted")

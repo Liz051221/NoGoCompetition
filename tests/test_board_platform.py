@@ -137,7 +137,8 @@ class BoardTests(unittest.TestCase):
                     self.assertEqual(row[0], str(move['number']))
                     self.assertEqual(row[1], '黑（先手）' if move['side'] == 1 else '白（后手）')
                     self.assertEqual(row[2], move['coord'])
-                    self.assertEqual(row[3:], [str(move['index'] % 9 + 1), str(move['index'] // 9 + 1)])
+                    self.assertEqual(row[3:5], [str(move['index'] % 9 + 1), str(move['index'] // 9 + 1)])
+                    self.assertAlmostEqual(float(row[5]), move['seconds'], places=3)
 
     def test_auto_record_does_not_overwrite_previous_game(self):
         game = self.game()

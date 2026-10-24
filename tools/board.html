@@ -3,25 +3,27 @@
 <title>NoGo · 不围棋</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#20332b;background:#f4f3ee}*{box-sizing:border-box}body{margin:0;padding:32px 24px}main{max-width:1100px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #cdd6cb;margin-bottom:24px}h1{font-weight:650;letter-spacing:2px}small,.muted{color:#647269}section{display:grid;grid-template-columns:minmax(300px,650px) 300px;gap:24px}.panel{background:#fff;border:1px solid #ddd;border-radius:16px;padding:22px}canvas{width:100%;display:block;touch-action:manipulation;border-radius:10px;background:#dfbb80}label{display:block;margin:16px 0 6px}select,button,input[type="text"]{font:inherit;width:100%;padding:11px;border-radius:8px;border:1px solid #bdc9be;background:white;color:#20332b}button{cursor:pointer}button.primary{background:#24533d;color:#fff;margin-top:18px;border:0}button:disabled{opacity:.5;cursor:wait}.status{font-size:18px;min-height:55px;line-height:1.5}.moves{height:190px;overflow:auto;line-height:1.8;font-variant-numeric:tabular-nums;border-top:1px solid #eee;padding-top:12px}.error{color:#aa302a;min-height:24px}p{line-height:1.7}a{color:inherit}input{accent-color:#24533d}.row{display:flex;gap:8px;align-items:center;margin:14px 0}.row label{margin:0}footer{font-size:13px;color:#647269;margin:16px 0}@media(max-width:800px){body{padding:16px}section{grid-template-columns:1fr}.moves{height:140px}header small{display:none}}
+.timers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}.timer{background:#fff;border:2px solid #dce2d9;border-radius:12px;padding:14px}.timer.active{border-color:#24533d;background:#eef5ed}.timer.reserve{border-color:#c36f2e}.timer strong{display:block;font-size:30px;font-variant-numeric:tabular-nums;margin:5px 0}.timer small{display:block;line-height:1.7}.confirm-actions{display:flex;gap:8px;margin:12px 0}.confirm-actions button{width:50%}.confirm-actions .primary{margin:0}.selection{min-height:24px;font-size:15px}.board-column{min-width:0}
 </style>
 <main><header><h1>NoGo <small>不围棋</small></h1><small>9 × 9 · 本地 SAU 引擎棋盘</small></header>
-<section><div><canvas id="board" width="720" height="720" aria-label="九路不围棋棋盘，点击交叉点落子"></canvas>
-<footer>坐标与引擎一致：横、纵轴均为 A–I，AA 位于左上角。红圈表示上一手。</footer>
+<section><div class="board-column"><div class="timers"><div id="timer-black" class="timer"><span id="name-black">先手 · 黑方</span><strong id="remaining-black">15:00</strong><small id="budget-black">思考 12:00 · 预留 03:00</small><small id="used-black">已用 00:00 · 本手 00:00</small></div><div id="timer-white" class="timer"><span id="name-white">后手 · 白方</span><strong id="remaining-white">15:00</strong><small id="budget-white">思考 12:00 · 预留 03:00</small><small id="used-white">已用 00:00 · 本手 00:00</small></div></div><canvas id="board" width="720" height="720" aria-label="九路不围棋棋盘，点击交叉点选择，随后确认落子"></canvas>
+<div class="confirm-actions"><button id="confirm" class="primary" disabled>确认落子</button><button id="cancel" disabled>取消选点</button></div><div id="selection" class="selection" role="status">请先开始新局。</div><footer>坐标与引擎一致：横、纵轴均为 A–I，AA 位于左上角。红圈表示上一手。</footer>
 <p>规则：黑先白后，轮流落子。<b>不能提掉对方棋子，不能自杀，不能停着。</b>轮到某方时没有合法落点，该方输。</p></div>
 <aside class="panel"><div id="status" class="status" role="status" aria-live="polite">正在连接…</div><div id="error" class="error" role="alert"></div>
 <label for="mode">对局模式</label><select id="mode"><option value="ha">我执黑 · AI 执白</option><option value="ah">AI 执黑 · 我执白</option><option value="hh">双人同机对弈</option><option value="aa">AI 对战 AI</option></select>
 <label for="first-name">先手名称（黑方）</label><input id="first-name" type="text" value="A1" maxlength="24">
 <label for="second-name">后手名称（白方）</label><input id="second-name" type="text" value="A2" maxlength="24">
-<label for="seconds">AI 每手思考上限</label><select id="seconds"><option value="2">2 秒 · 快速体验</option><option value="5">5 秒</option><option value="10">10 秒</option><option value="30">30 秒</option><option value="60">60 秒 · 原包上限</option></select>
-<button id="new" class="primary">开始新局</button><button id="pause" style="margin-top:8px" disabled>暂停 AI</button>
+<label for="seconds">AI 搜索时长</label><select id="seconds"><option value="60">长搜索 · 单手上限 60 秒</option><option value="30">单手上限 30 秒</option><option value="10">单手上限 10 秒</option><option value="5">单手上限 5 秒</option><option value="2">快速体验 · 单手上限 2 秒</option></select>
+<p class="muted" style="font-size:13px">每方总计 15 分钟：思考 12 分钟＋预留 3 分钟。AI 按剩余预算分配搜索时间，遇到必胜或唯一合法着可提前结束。</p>
+<button id="new" class="primary">开始新局</button><button id="pause" style="margin-top:8px" disabled>暂停对局</button>
 <div class="row"><input id="hints" type="checkbox" checked><label for="hints">显示当前方合法落点</label></div>
 <div class="row"><input id="numbers" type="checkbox"><label for="numbers">显示手数</label></div>
-<button id="download-txt">导出棋谱 TXT</button><button id="download" style="margin-top:8px">导出棋谱 JSON</button><p id="record-status" class="muted" role="status" style="font-size:13px;overflow-wrap:anywhere">对局结束后将自动保存 TXT 棋谱。</p><p class="muted" id="clock">AI 用时：黑 0 秒 / 白 0 秒</p><div class="moves" id="moves">暂无棋步</div>
-<p class="muted" style="font-size:12px">名称、时长和模式在新局生效。用时含引擎响应开销，仅供本地训练参考；正式比赛请遵循裁判规则。</p></aside></section></main>
+<button id="download-txt">导出棋谱 TXT</button><button id="download" style="margin-top:8px">导出棋谱 JSON</button><p id="record-status" class="muted" role="status" style="font-size:13px;overflow-wrap:anywhere">对局结束后将自动保存 TXT 棋谱。</p><div class="moves" id="moves">暂无棋步</div>
+<p class="muted" style="font-size:12px">人类选点后需点“确认落子”，确认前持续计时。总时间耗尽判负；暂停时停钟，AI 当前一手结束后才暂停。</p></aside></section></main>
 <script>
 const token='__TOKEN__';
 const $=id=>document.getElementById(id), c=$('board'), ctx=c.getContext('2d');
-let state=null,busy=false,paused=false,notice='',operation='';
+let state=null,busy=false,notice='',operation='',pending=null,receivedAt=0,syncing=false;
 function draw(){
  ctx.clearRect(0,0,720,720);ctx.fillStyle='#dfbb80';ctx.fillRect(0,0,720,720);
  ctx.strokeStyle='#695533';ctx.lineWidth=1.3;
@@ -31,29 +33,56 @@ function draw(){
  if($('hints').checked&&!state.over)for(let i of state.legal){ctx.fillStyle='rgba(40,88,55,.22)';ctx.beginPath();ctx.arc(64+i%9*74,64+Math.floor(i/9)*74,6,0,Math.PI*2);ctx.fill()}
  let nums=new Map(state.history.map(m=>[m.index,m.number]));
  state.board.forEach((s,i)=>{if(!s)return;let x=64+i%9*74,y=64+Math.floor(i/9)*74;ctx.shadowColor='#0005';ctx.shadowBlur=5;ctx.shadowOffsetY=2;ctx.fillStyle=s===1?'#202622':'#fffdf5';ctx.beginPath();ctx.arc(x,y,30,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.shadowOffsetY=0;ctx.strokeStyle=s===1?'#111':'#a99e8a';ctx.stroke();if($('numbers').checked){ctx.fillStyle=s===1?'white':'#222';ctx.font='17px sans-serif';ctx.fillText(nums.get(i),x,y)}});
+ if(pending!==null&&!state.over){let x=64+pending%9*74,y=64+Math.floor(pending/9)*74;ctx.globalAlpha=.55;ctx.fillStyle=state.side===1?'#202622':'#fffdf5';ctx.beginPath();ctx.arc(x,y,30,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='#d54c35';ctx.lineWidth=3;ctx.setLineDash([6,5]);ctx.stroke();ctx.setLineDash([])}
  if(state.history.length){let i=state.history.at(-1).index;ctx.strokeStyle='#d54c35';ctx.lineWidth=3;ctx.beginPath();ctx.arc(64+i%9*74,64+Math.floor(i/9)*74,34,0,Math.PI*2);ctx.stroke()}
 }
+function humanTurn(){return state&&!state.over&&!state.paused&&!state.thinking&&state.active_side!==null&&state.players[String(state.side)]==='human'}
+function coord(i){return String.fromCharCode(65+i%9)+String.fromCharCode(65+Math.floor(i/9))}
+function duration(seconds,remaining=false){let n=Math.max(0,remaining?Math.ceil(seconds):Math.floor(seconds));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+function renderClocks(){
+ if(!state)return;let delta=Math.max(0,(performance.now()-receivedAt)/1000);
+ for(let [side,label] of [[1,'black'],[-1,'white']]){let base=state.clocks[String(side)],active=state.active_side===side,used=base.used+(active?delta:0),main=Math.max(0,state.total_seconds-state.reserve_seconds-used),remaining=Math.max(0,state.total_seconds-used),reserve=Math.min(state.reserve_seconds,remaining);
+ $('timer-'+label).className='timer'+(active?' active':'')+(active&&main<=0?' reserve':'');
+ $('name-'+label).textContent=(side===1?'先手 · 黑方':'后手 · 白方')+' · '+state.names[String(side)];
+ $('remaining-'+label).textContent=duration(remaining,true);
+ $('budget-'+label).textContent='思考 '+duration(main,true)+' · 预留 '+duration(reserve,true)+(main<=0?'（预留阶段）':'');
+ $('used-'+label).textContent='已用 '+duration(used)+' · 本手 '+duration(base.turn_elapsed+(active?delta:0));
+ }
+}
 function render(){
- draw();if(!state)return;
- $('status').textContent=busy?(operation==='step'?'AI 正在思考，请稍候…':'正在处理，请稍候…'):state.message+(paused&&!state.over?'（AI 已暂停）':'');
+ draw();if(!state)return;renderClocks();
+ $('status').textContent=state.thinking?'AI 长搜索中，请稍候…':state.message+(state.paused&&!state.over?'（已暂停，计时停止）':'');
+ if(state.pause_pending)$('status').textContent+=' 当前一手结束后暂停。';
  $('error').textContent=notice;
- $('new').disabled=busy;
+ $('new').disabled=busy||state.thinking;
  $('download-txt').disabled=busy||!state.history.length;
  $('record-status').textContent=state.record_error||(state.record_filename?'棋谱已自动保存：棋谱/'+state.record_filename:'对局结束后将自动保存 TXT 棋谱到平台的“棋谱”文件夹。');
  $('record-status').style.color=state.record_error?'#aa302a':'';
- $('pause').disabled=state.over||!Object.values(state.players).includes('ai');
- $('pause').textContent=paused?'继续 AI':'暂停 AI';
- $('clock').textContent=`AI 用时：黑 ${state.spent['1'].toFixed(1)} 秒 / 白 ${state.spent['-1'].toFixed(1)} 秒`;
- $('moves').textContent=state.history.map(m=>`${m.number}. ${m.side===1?'黑':'白'} ${m.coord} ${m.seconds?`· ${m.seconds.toFixed(2)}s`:''}`).join('\n')||'暂无棋步';$('moves').style.whiteSpace='pre-line';$('moves').scrollTop=$('moves').scrollHeight;
+ $('pause').disabled=busy||state.over||state.active_side===null&&!state.paused;
+ $('pause').textContent=state.pause_pending?'取消暂停请求':state.paused?'继续对局':'暂停对局';
+ $('confirm').disabled=busy||!humanTurn()||pending===null;
+ $('cancel').disabled=busy||pending===null;
+ $('confirm').textContent=pending===null?'确认落子':'确认落子 '+coord(pending);
+ $('selection').textContent=state.over?'本局已结束。':state.paused?'对局已暂停。':humanTurn()?(pending===null?'点击棋盘选择落点，再点击“确认落子”。':'待确认：'+coord(pending)+'。可以重新选点；确认前仍在计时。'):state.active_side===null?'请先开始新局。':'等待 AI 落子。';
+ $('moves').textContent=state.history.map(m=>`${m.number}. ${m.side===1?'黑':'白'} ${m.coord} · ${m.seconds.toFixed(2)}s`).join('\n')||'暂无棋步';$('moves').style.whiteSpace='pre-line';$('moves').scrollTop=$('moves').scrollHeight;
+}
+function adopt(s){
+ if(state&&s.server_time<state.server_time)return;
+ if(!state||s.game_id!==state.game_id||s.history.length!==state.history.length||s.side!==state.side||s.over)pending=null;
+ state=s;receivedAt=performance.now();render();
 }
 async function api(path,data){let r=await fetch('/api/'+path,{method:'POST',headers:{'Content-Type':'application/json','X-NoGo-Token':token},body:JSON.stringify(data||{})});let s=await r.json();if(!r.ok)throw Error(s.error||'请求失败');return s}
-async function act(path,data){if(busy)return;busy=true;operation=path;notice='';render();try{state=await api(path,data)}catch(e){notice=e.message;paused=true;try{state=await (await fetch('/api/state')).json()}catch{notice+='；无法连接服务，请检查启动终端。'}}finally{busy=false;render()}}
-$('new').onclick=async()=>{if(state?.history.length&&!state.over&&!confirm('结束当前对局并开始新局？'))return;paused=false;await act('new',{mode:$('mode').value,seconds:Number($('seconds').value),first_name:$('first-name').value,second_name:$('second-name').value})};
-$('pause').onclick=()=>{paused=!paused;render()};
+async function sync(){if(syncing)return;syncing=true;try{let r=await fetch('/api/state');if(!r.ok)throw Error('无法连接');adopt(await r.json())}catch{notice='无法连接服务，请检查启动终端。';if(state)render();else $('status').textContent=notice}finally{syncing=false}}
+async function act(path,data){if(busy)return;busy=true;operation=path;notice='';render();try{adopt(await api(path,data))}catch(e){notice=e.message;await sync()}finally{busy=false;render()}}
+$('new').onclick=async()=>{if(busy||state?.thinking)return;if(state?.history.length&&!state.over&&!confirm('结束当前对局并开始新局？'))return;pending=null;await act('new',{mode:$('mode').value,seconds:Number($('seconds').value),first_name:$('first-name').value,second_name:$('second-name').value})};
+$('pause').onclick=()=>{if(state)act('pause',{paused:!(state.paused||state.pause_pending)})};
 $('hints').onchange=draw;$('numbers').onchange=draw;
-c.onclick=e=>{if(!state||busy||state.over||state.players[String(state.side)]!=='human')return;let r=c.getBoundingClientRect(),x=Math.round(((e.clientX-r.left)*720/r.width-64)/74),y=Math.round(((e.clientY-r.top)*720/r.height-64)/74);if(x>=0&&x<9&&y>=0&&y<9)act('move',{move:y*9+x})};
+c.onclick=e=>{if(busy||!humanTurn())return;let r=c.getBoundingClientRect(),x=Math.round(((e.clientX-r.left)*720/r.width-64)/74),y=Math.round(((e.clientY-r.top)*720/r.height-64)/74);if(x<0||x>=9||y<0||y>=9)return;let move=y*9+x;if(!state.legal.includes(move)){notice='此处不是合法落点，请重新选择。';render();return}notice='';pending=move;render()};
+$('cancel').onclick=()=>{pending=null;render()};
+$('confirm').onclick=()=>{if(busy||!humanTurn()||pending===null)return;act('move',{move:pending,expected_move_no:state.history.length,game_id:state.game_id})};
 $('download-txt').onclick=()=>{if(!state||busy||!state.history.length)return;let a=document.createElement('a');a.href='/api/record';a.click()};
-$('download').onclick=()=>{if(!state)return;let u=URL.createObjectURL(new Blob([JSON.stringify({format:'nogo-local-sau-v1',exported_at:new Date().toISOString(),...state},null,2)],{type:'application/json'}));let a=document.createElement('a');a.href=u;a.download='NoGo-'+Date.now()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
-setInterval(()=>{if(state&&!busy&&!paused&&!state.over&&state.players[String(state.side)]==='ai')act('step')},250);
-fetch('/api/state').then(r=>r.json()).then(s=>{state=s;$('first-name').value=s.names['1'];$('second-name').value=s.names['-1'];render()}).catch(()=>{$('status').textContent='无法连接，请重新启动棋盘平台。'});draw();
+$('download').onclick=()=>{if(!state)return;let u=URL.createObjectURL(new Blob([JSON.stringify({format:'nogo-local-sau-v2',exported_at:new Date().toISOString(),...state},null,2)],{type:'application/json'}));let a=document.createElement('a');a.href=u;a.download='NoGo-'+Date.now()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+setInterval(()=>{if(state&&!busy&&!state.thinking&&!state.paused&&!state.over&&state.active_side!==null&&state.players[String(state.side)]==='ai')act('step')},250);
+setInterval(sync,500);setInterval(renderClocks,100);
+sync().then(()=>{if(state){$('first-name').value=state.names['1'];$('second-name').value=state.names['-1'];$('seconds').value=String(state.move_cap_seconds)}});draw();
 </script></html>
